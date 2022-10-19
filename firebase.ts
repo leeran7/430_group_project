@@ -8,16 +8,16 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore/lite";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import User from "../userType";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDLXkpVoC6kGsJ9w5d-bRVQR9gcHsJwD6g",
-    authDomain: "games-r-us-a0241.firebaseapp.com",
-    projectId: "games-r-us-a0241",
-    storageBucket: "games-r-us-a0241.appspot.com",
-    messagingSenderId: "486124633503",
-    appId: "1:486124633503:web:e437711a1d04129bb391aa"
-  };
+  apiKey: "AIzaSyDLXkpVoC6kGsJ9w5d-bRVQR9gcHsJwD6g",
+  authDomain: "games-r-us-a0241.firebaseapp.com",
+  projectId: "games-r-us-a0241",
+  storageBucket: "games-r-us-a0241.appspot.com",
+  messagingSenderId: "486124633503",
+  appId: "1:486124633503:web:e437711a1d04129bb391aa",
+};
 
 const app = initializeApp(firebaseConfig);
 export const authen = getAuth(app);
@@ -37,10 +37,10 @@ async function getAllUsers() {
 }
 
 async function addUser(user: User) {
-    const jobs = collection(fs, "users");
-    const job = doc(jobs);
-    setDoc(job, user);
-  }
+  const jobs = collection(fs, "users");
+  const job = doc(jobs);
+  setDoc(job, user);
+}
 
 async function updateDocument(id: string, obj: User, colName: string) {
   const coll = collection(fs, colName);
@@ -49,20 +49,7 @@ async function updateDocument(id: string, obj: User, colName: string) {
 }
 
 async function updateUser(id: string, user: User) {
-    await updateDocument(id, user, "users");
-}
-
-type User = {
-    firstName: string;
-    lastName: string;
-    address: string;
-    city: string;
-    country: string;
-    emailAddress: string;
-    zipcode: number;
-    cart: string[];
-    owned: string[];
-    wishlist: string[];
+  await updateDocument(id, user, "users");
 }
 
 async function deleteDocument(id: string, colName: string) {
@@ -71,12 +58,6 @@ async function deleteDocument(id: string, colName: string) {
   await deleteDoc(document);
 }
 
-async function deleteJob(id: string) {
-  await deleteDocument(id, "experience");
+async function deleteUser(id: string) {
+  await deleteDocument(id, "users");
 }
-
-async function deleteProject(id: string) {
-  await deleteDocument(id, "projects");
-}
-
-export default fb;
