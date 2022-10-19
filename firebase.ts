@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signOut, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import {
   getFirestore,
   collection,
@@ -8,7 +8,7 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore/lite";
-import User from "../userType";
+import User from "./userType";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDLXkpVoC6kGsJ9w5d-bRVQR9gcHsJwD6g",
