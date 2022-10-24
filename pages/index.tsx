@@ -1,8 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-
+import Link from "next/link";
+import { logout, useUser } from "../firebase";
 const Home: NextPage = () => {
+  const [user] = useUser();
   return (
     <div>
       <Head>
@@ -13,6 +14,18 @@ const Home: NextPage = () => {
 
       <main>
         <h1 className="text-sm font-bold">HELLO THERE</h1>
+        {user ? (
+          <button
+            onClick={async () => {
+              await logout();
+              alert("Logged out");
+            }}
+          >
+            logout
+          </button>
+        ) : (
+          <Link href="/login">Login</Link>
+        )}
       </main>
 
       <footer></footer>
