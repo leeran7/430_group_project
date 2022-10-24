@@ -1,5 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  createUserWithEmailAndPassword,
+  browserSessionPersistence,
+} from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 import {
   getFirestore,
   collection,
@@ -23,6 +30,8 @@ const app = initializeApp(firebaseConfig);
 export const authen = getAuth(app);
 const fs = getFirestore(app);
 
+export const useUser = () => useAuthState(authen);
+
 async function getAllDocsFromColl(colName: string) {
   const coll = collection(fs, colName);
   const { docs } = await getDocs(coll);
@@ -36,10 +45,15 @@ async function getAllUsers() {
   return await getAllDocsFromColl("users");
 }
 
-async function addUser(user: User) {
-  const jobs = collection(fs, "users");
-  const job = doc(jobs);
-  setDoc(job, user);
+export async function getUserById(id: string) {
+  const users = await getAllUsers();
+  return users.find((user) => user.id === id);
+}
+
+export async function addUser(newUser: User) {
+  const users = collection(fs, "users");
+  const userDoc = doc(users, newUser.uid);
+  await setDoc(userDoc, newUser);
 }
 
 async function updateDocument(id: string, obj: User, colName: string) {
@@ -48,7 +62,7 @@ async function updateDocument(id: string, obj: User, colName: string) {
   await setDoc(data, obj);
 }
 
-async function updateUser(id: string, user: User) {
+export async function updateUser(id: string, user: User) {
   await updateDocument(id, user, "users");
 }
 
@@ -58,6 +72,30 @@ async function deleteDocument(id: string, colName: string) {
   await deleteDoc(document);
 }
 
-async function deleteUser(id: string) {
+export async function deleteUser(id: string) {
   await deleteDocument(id, "users");
+}
+
+export async function login(email: string, password: string) {
+  return await authen
+    .setPersistence(browserSessionPersistence)
+    .then(async () => {
+      return await signInWithEmailAndPassword(authen, email, password).then(
+        (data) => data.user
+      );
+    });
+}
+
+export async function logout() {
+  return await signOut(authen);
+}
+
+export async function register(email: string, password: string) {
+  return await authen
+    .setPersistence(browserSessionPersistence)
+    .then(async () => {
+      return await createUserWithEmailAndPassword(authen, email, password).then(
+        (data) => data.user
+      );
+    });
 }

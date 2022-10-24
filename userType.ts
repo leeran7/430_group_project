@@ -1,7 +1,9 @@
 type User = {
+  uid: string;
   firstName: string;
   lastName: string;
   address: string;
+  state: string;
   city: string;
   country: string;
   emailAddress: string;
