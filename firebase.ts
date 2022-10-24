@@ -30,7 +30,7 @@ const app = initializeApp(firebaseConfig);
 export const authen = getAuth(app);
 const fs = getFirestore(app);
 
-const useUser = () => useAuthState(authen);
+export const useUser = () => useAuthState(authen);
 
 async function getAllDocsFromColl(colName: string) {
   const coll = collection(fs, colName);
@@ -45,12 +45,12 @@ async function getAllUsers() {
   return await getAllDocsFromColl("users");
 }
 
-async function getUserById(id: string) {
+export async function getUserById(id: string) {
   const users = await getAllUsers();
   return users.find((user) => user.id === id);
 }
 
-async function addUser(newUser: User) {
+export async function addUser(newUser: User) {
   const users = collection(fs, "users");
   const userDoc = doc(users, newUser.uid);
   await setDoc(userDoc, newUser);
@@ -62,7 +62,7 @@ async function updateDocument(id: string, obj: User, colName: string) {
   await setDoc(data, obj);
 }
 
-async function updateUser(id: string, user: User) {
+export async function updateUser(id: string, user: User) {
   await updateDocument(id, user, "users");
 }
 
@@ -72,11 +72,11 @@ async function deleteDocument(id: string, colName: string) {
   await deleteDoc(document);
 }
 
-async function deleteUser(id: string) {
+export async function deleteUser(id: string) {
   await deleteDocument(id, "users");
 }
 
-async function login(email: string, password: string) {
+export async function login(email: string, password: string) {
   return await authen
     .setPersistence(browserSessionPersistence)
     .then(async () => {
@@ -86,11 +86,11 @@ async function login(email: string, password: string) {
     });
 }
 
-async function logout() {
+export async function logout() {
   return await signOut(authen);
 }
 
-async function register(email: string, password: string) {
+export async function register(email: string, password: string) {
   return await authen
     .setPersistence(browserSessionPersistence)
     .then(async () => {
@@ -99,14 +99,3 @@ async function register(email: string, password: string) {
       );
     });
 }
-
-export {
-  addUser,
-  updateUser,
-  deleteUser,
-  login,
-  logout,
-  register,
-  useUser,
-  getUserById,
-};
