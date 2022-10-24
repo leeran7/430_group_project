@@ -3,18 +3,21 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { login, register, useUser, addUser } from "../firebase";
 import User from "../userType";
-import Image from "next/image";
 
 const Login: NextPage = () => {
   const [user] = useUser();
+  const { push } = useRouter();
   const [gettingStarted, setGettingStarted] = useState(false);
+  if (user && !gettingStarted) {
+    push("/");
+  }
   return (
     <div>
-      {!user ? (
+      {user && gettingStarted ? (
+        <GetStarted />
+      ) : !user ? (
         <LoginForm setGettingStarted={setGettingStarted} />
-      ) : (
-        gettingStarted && <GetStarted />
-      )}
+      ) : null}
     </div>
   );
 };
@@ -61,7 +64,7 @@ const LoginForm: React.FC<{ setGettingStarted: (v: boolean) => void }> = ({
       <div className="flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div>
-            <Image
+            <img
               className="h-12 w-auto"
               src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
               alt="Your Company"
@@ -196,7 +199,7 @@ const LoginForm: React.FC<{ setGettingStarted: (v: boolean) => void }> = ({
         </div>
       </div>
       <div className="relative hidden w-0 flex-1 lg:block">
-        <Image
+        <img
           className="absolute inset-0 h-full w-full object-cover"
           src="https://images.unsplash.com/photo-1505904267569-f02eaeb45a4c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
           alt=""
@@ -248,175 +251,172 @@ const GetStarted: React.FC = () => {
       console.error(err);
     }
   };
+
   return (
-    <div className="mt-10 sm:mt-0 sm:mx-20 lg:mx-56 2xl:mx-96">
-      <div>
-        <div className="md:col-span-1">
-          <div className="px-4 sm:px-0">
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
+    <div className="min-h-screen justify-center items-center md:grid md:grid-cols-5 md:gap-6 mx-10 sm:mx-20 lg:mx-64">
+      <div className="mt-5 md:col-span-5 md:mt-0">
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            return await onSubmit();
+          }}
+        >
+          <div className="px-4 mb-2 sm:px-0">
+            <h2 className="text-2xl font-semibold leading-6 text-gray-900">
               Personal Information
-            </h3>
-            <p className="mt-1 text-sm text-gray-600">
-              Use a permanent address where you can receive mail.
-            </p>
+            </h2>
           </div>
-        </div>
-        <div className="mt-5 md:col-span-2 md:mt-0">
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              return await onSubmit();
-            }}
-          >
-            <div className="overflow-hidden shadow sm:rounded-md">
-              <div className="bg-white px-4 py-5 sm:p-6">
-                <div className="grid grid-cols-6 gap-6">
-                  <div className="col-span-6 sm:col-span-3">
-                    <label
-                      htmlFor="first-name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      First name
-                    </label>
-                    <input
-                      type="text"
-                      name="first-name"
-                      id="first-name"
-                      defaultValue={newUser.firstName}
-                      onChange={(e) => setField("firstName", e.target.value)}
-                      autoComplete="given-name"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
+          <div className="overflow-hidden shadow sm:rounded-md">
+            <div className="bg-white px-4 py-5 sm:p-6">
+              <div className="grid grid-cols-6 gap-6">
+                <div className="col-span-6 sm:col-span-3">
+                  <label
+                    htmlFor="first-name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    First name
+                  </label>
+                  <input
+                    type="text"
+                    name="first-name"
+                    id="first-name"
+                    defaultValue={newUser.firstName}
+                    onChange={(e) => setField("firstName", e.target.value)}
+                    autoComplete="given-name"
+                    className={inputStyles}
+                  />
+                </div>
 
-                  <div className="col-span-6 sm:col-span-3">
-                    <label
-                      htmlFor="last-name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Last name
-                    </label>
-                    <input
-                      type="text"
-                      name="last-name"
-                      id="last-name"
-                      defaultValue={newUser.lastName}
-                      onChange={(e) => setField("lastName", e.target.value)}
-                      autoComplete="family-name"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
+                <div className="col-span-6 sm:col-span-3">
+                  <label
+                    htmlFor="last-name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Last name
+                  </label>
+                  <input
+                    type="text"
+                    name="last-name"
+                    id="last-name"
+                    defaultValue={newUser.lastName}
+                    onChange={(e) => setField("lastName", e.target.value)}
+                    autoComplete="family-name"
+                    className={inputStyles}
+                  />
+                </div>
 
-                  <div className="col-span-6 sm:col-span-3">
-                    <label
-                      htmlFor="country"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Country
-                    </label>
-                    <select
-                      id="country"
-                      name="country"
-                      autoComplete="country-name"
-                      defaultValue={newUser.country}
-                      onChange={(e) => setField("country", e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    >
-                      <option>United States</option>
-                      <option>Canada</option>
-                      <option>Mexico</option>
-                    </select>
-                  </div>
+                <div className="col-span-6 sm:col-span-3">
+                  <label
+                    htmlFor="country"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Country
+                  </label>
+                  <select
+                    id="country"
+                    name="country"
+                    autoComplete="country-name"
+                    defaultValue={newUser.country}
+                    onChange={(e) => setField("country", e.target.value)}
+                    className={inputStyles}
+                  >
+                    <option>United States</option>
+                    <option>Canada</option>
+                    <option>Mexico</option>
+                  </select>
+                </div>
 
-                  <div className="col-span-6">
-                    <label
-                      htmlFor="street-address"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Street address
-                    </label>
-                    <input
-                      type="text"
-                      name="street-address"
-                      id="street-address"
-                      defaultValue={newUser.address}
-                      onChange={(e) => setField("address", e.target.value)}
-                      autoComplete="street-address"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
+                <div className="col-span-6">
+                  <label
+                    htmlFor="street-address"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Street address
+                  </label>
+                  <input
+                    type="text"
+                    name="street-address"
+                    id="street-address"
+                    defaultValue={newUser.address}
+                    onChange={(e) => setField("address", e.target.value)}
+                    autoComplete="street-address"
+                    className={inputStyles}
+                  />
+                </div>
 
-                  <div className="col-span-6 sm:col-span-6 lg:col-span-2">
-                    <label
-                      htmlFor="city"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      City
-                    </label>
-                    <input
-                      type="text"
-                      name="city"
-                      id="city"
-                      defaultValue={newUser.city}
-                      onChange={(e) => setField("city", e.target.value)}
-                      autoComplete="address-level2"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
+                <div className="col-span-6 sm:col-span-6 lg:col-span-2">
+                  <label
+                    htmlFor="city"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    name="city"
+                    id="city"
+                    defaultValue={newUser.city}
+                    onChange={(e) => setField("city", e.target.value)}
+                    autoComplete="address-level2"
+                    className={inputStyles}
+                  />
+                </div>
 
-                  <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                    <label
-                      htmlFor="region"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      State / Province
-                    </label>
-                    <input
-                      type="text"
-                      name="region"
-                      id="region"
-                      defaultValue={newUser.state}
-                      onChange={(e) => setField("state", e.target.value)}
-                      autoComplete="address-level1"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
+                <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+                  <label
+                    htmlFor="region"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    State / Province
+                  </label>
+                  <input
+                    type="text"
+                    name="region"
+                    id="region"
+                    defaultValue={newUser.state}
+                    onChange={(e) => setField("state", e.target.value)}
+                    autoComplete="address-level1"
+                    className={inputStyles}
+                  />
+                </div>
 
-                  <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                    <label
-                      htmlFor="postal-code"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      ZIP / Postal code
-                    </label>
-                    <input
-                      type="number"
-                      name="postal-code"
-                      id="postal-code"
-                      defaultValue={newUser.zipcode}
-                      onChange={(e) =>
-                        setField("zipcode", Number(e.target.value))
-                      }
-                      autoComplete="postal-code"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
+                <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+                  <label
+                    htmlFor="postal-code"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    ZIP / Postal code
+                  </label>
+                  <input
+                    type="number"
+                    name="postal-code"
+                    id="postal-code"
+                    defaultValue={newUser.zipcode}
+                    onChange={(e) =>
+                      setField("zipcode", Number(e.target.value))
+                    }
+                    autoComplete="postal-code"
+                    className={inputStyles}
+                  />
                 </div>
               </div>
-              <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
-                <button
-                  type="submit"
-                  className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  Complete Registration
-                </button>
-              </div>
             </div>
-          </form>
-        </div>
+            <div className="px-4 py-3 sm:px-6">
+              <button
+                type="submit"
+                className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Complete Registration
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );
 };
+
+const inputStyles =
+  "mt-1 block w-full p-3 rounded-md bg-gray-100 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm";
 
 export default Login;
