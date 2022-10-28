@@ -24,7 +24,7 @@ const Home: NextPage = () => {
             logout
           </button>
         ) : (
-          <Link href="/login">Login</Link>
+          <Link href="/home">Login</Link>
         )}
       </main>
 
