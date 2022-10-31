@@ -28,8 +28,8 @@ const NavBar = () => {
             <a href="#">
               <span className="sr-only">Your Company</span>
               <img
-                className="h-10 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=white"
+                className="h-16 w-auto"
+                src='/logo.png'
                 alt=""
               />
             </a>
