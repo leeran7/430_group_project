@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getSymbols } from "./game/[slug]";
 import { RawgApiClient, Game } from "../components/rawgApiClient";
 import { useUser } from "../firebase";
-import pick from "lodash/pick";
+import { pick } from "lodash";
 import { useRouter } from "next/router";
 
 const Home: NextPage<Props> = ({ games }) => {
