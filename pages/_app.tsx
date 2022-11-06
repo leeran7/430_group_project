@@ -36,7 +36,7 @@ const NavBar = () => {
                 if (!link.show) return null;
                 return (
                   <Link key={link.name} href={link.href}>
-                    <a className="text-xl font-medium text-white underline underline-offset-4 hover:text-indigo-50 ">
+                    <a className="text-xl font-medium text-white hover:underline transition-all ease-in-out duration-100 hover:text-indigo-50 ">
                       {link.name}
                     </a>
                   </Link>
