@@ -19,11 +19,14 @@ const Home: NextPage<Props> = ({ game }) => {
     <div className="relative">
       <Carousel className="object-cover h-1/2 w-full">
         <div>
-          <img src={game.background_image} />
+          <img src={game.background_image} alt="background image" />
           <p className="legend">{game.name}</p>
         </div>
         <div>
-          <img src={game.background_image_additional} />
+          <img
+            src={game.background_image_additional}
+            alt="background image alternate"
+          />
           <p className="legend">{game.name}</p>
         </div>
       </Carousel>
@@ -70,7 +73,10 @@ const Home: NextPage<Props> = ({ game }) => {
             {game.developers.map((d) => (
               <div key={d.slug}>
                 <p className="legend">{d.name}</p>
-                <img src={d.image_background} />
+                <img
+                  src={d.image_background}
+                  alt="developers background image"
+                />
               </div>
             ))}
           </Carousel>
