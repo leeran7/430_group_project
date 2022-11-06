@@ -3,7 +3,7 @@ export class RawgApiClient {
     const fullUrl = `https://api.rawg.io/api/${url}?key=${
       process.env.RAWG_API_KEY
     }${addedQuery ?? ""}`;
-    console.log(fullUrl);
+    
     const res = await fetch(fullUrl, {
       method: "GET",
       headers: {

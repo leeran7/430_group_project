@@ -19,11 +19,14 @@ const Home: NextPage<Props> = ({ game }) => {
     <div className="relative">
       <Carousel className="object-cover h-1/2 w-full">
         <div>
-          <img src={game.background_image} />
+          <img src={game.background_image} alt="background image" />
           <p className="legend">{game.name}</p>
         </div>
         <div>
-          <img src={game.background_image_additional} />
+          <img
+            src={game.background_image_additional}
+            alt="background image alternate"
+          />
           <p className="legend">{game.name}</p>
         </div>
       </Carousel>
@@ -37,6 +40,12 @@ const Home: NextPage<Props> = ({ game }) => {
               </a>
             </h1>
             <p className="tracking-wider">{game.description_raw}</p>
+            <p>
+              Price:{" "}
+              <span className="semi-bold">
+                {getPricing(game.released, game.rating)}
+              </span>
+            </p>
             <p>
               Release Date: <span className="semi-bold">{game.released}</span>
             </p>
@@ -70,7 +79,10 @@ const Home: NextPage<Props> = ({ game }) => {
             {game.developers.map((d) => (
               <div key={d.slug}>
                 <p className="legend">{d.name}</p>
-                <img src={d.image_background} />
+                <img
+                  src={d.image_background}
+                  alt="developers background image"
+                />
               </div>
             ))}
           </Carousel>
@@ -115,7 +127,7 @@ export const getSymbols = (platform: string) => {
   }
   const number = platform.match(/\d+/g);
   return (
-    <p key={platform} className="flex text-2xl items-center justify-center">
+    <p key={platform} className="flex text-xl items-center justify-center">
       {symb}
       <sup>{platform.includes("One") ? 1 : number}</sup>
     </p>
@@ -123,6 +135,24 @@ export const getSymbols = (platform: string) => {
 };
 type Props = {
   game: Game;
+};
+
+export const getPricing = (releaseDate: string, rating: number) => {
+  let price = null;
+  if (releaseDate.includes("2022")) {
+    price = "$69.99";
+  } else if (rating >= 4) {
+    price = "$59.99";
+  } else if (rating >= 3) {
+    price = "$49.99";
+  } else if (rating >= 2) {
+    price = "$39.99";
+  } else if (rating >= 1) {
+    price = "$29.99";
+  } else {
+    price = "$19.99";
+  }
+  return price;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -142,7 +172,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       notFound: true,
     };
   }
-  console.log(game);
+
   return {
     props: { game },
   };
