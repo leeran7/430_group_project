@@ -41,7 +41,10 @@ const Home: NextPage<Props> = ({ game }) => {
             </h1>
             <p className="tracking-wider">{game.description_raw}</p>
             <p>
-              Price: <span className="semi-bold">{getPricing(game.released, game.rating)}</span>
+              Price:{" "}
+              <span className="semi-bold">
+                {getPricing(game.released, game.rating)}
+              </span>
             </p>
             <p>
               Release Date: <span className="semi-bold">{game.released}</span>
@@ -124,7 +127,7 @@ export const getSymbols = (platform: string) => {
   }
   const number = platform.match(/\d+/g);
   return (
-    <p key={platform} className="flex text-2xl items-center justify-center">
+    <p key={platform} className="flex text-xl items-center justify-center">
       {symb}
       <sup>{platform.includes("One") ? 1 : number}</sup>
     </p>
@@ -136,26 +139,21 @@ type Props = {
 
 export const getPricing = (releaseDate: string, rating: number) => {
   let price = null;
-  if(releaseDate.includes("2022")){
+  if (releaseDate.includes("2022")) {
     price = "$69.99";
-  }
-  else if(rating >= 4){
+  } else if (rating >= 4) {
     price = "$59.99";
-  }
-  else if(rating >= 3){
+  } else if (rating >= 3) {
     price = "$49.99";
-  }
-  else if(rating >= 2){
+  } else if (rating >= 2) {
     price = "$39.99";
-  }
-  else if(rating >= 1){
+  } else if (rating >= 1) {
     price = "$29.99";
-  }
-  else{
+  } else {
     price = "$19.99";
   }
   return price;
-}
+};
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return { paths: [], fallback: true };
@@ -174,7 +172,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       notFound: true,
     };
   }
-  console.log(game);
+
   return {
     props: { game },
   };
