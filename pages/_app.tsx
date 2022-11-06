@@ -25,14 +25,12 @@ const NavBar = () => {
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
         <div className="flex w-full items-center justify-between border-b border-indigo-500 py-6 lg:border-none">
           <div className="flex items-center">
-            <a href="#">
-              <span className="sr-only">GAMES R US</span>
-              <Link href="/">
-                <a>
-                  <img className="h-16 w-auto" src="/logo.png" alt="" />
-                </a>
-              </Link>
-            </a>
+            <Link href="/">
+              <a>
+                <span className="sr-only">GAMES R US</span>
+                <img className="h-16 w-auto" src="/logo.png" alt="" />
+              </a>
+            </Link>
             <div className="ml-10 hidden space-x-8 lg:block ">
               {navigation.map((link) => {
                 if (!link.show) return null;
