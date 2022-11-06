@@ -41,6 +41,9 @@ const Home: NextPage<Props> = ({ game }) => {
             </h1>
             <p className="tracking-wider">{game.description_raw}</p>
             <p>
+              Price: <span className="semi-bold">{getPricing(game.released, game.rating)}</span>
+            </p>
+            <p>
               Release Date: <span className="semi-bold">{game.released}</span>
             </p>
 
@@ -130,6 +133,29 @@ export const getSymbols = (platform: string) => {
 type Props = {
   game: Game;
 };
+
+export const getPricing = (releaseDate: string, rating: number) => {
+  let price = null;
+  if(releaseDate.includes("2022")){
+    price = "$69.99";
+  }
+  else if(rating >= 4){
+    price = "$59.99";
+  }
+  else if(rating >= 3){
+    price = "$49.99";
+  }
+  else if(rating >= 2){
+    price = "$39.99";
+  }
+  else if(rating >= 1){
+    price = "$29.99";
+  }
+  else{
+    price = "$19.99";
+  }
+  return price;
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return { paths: [], fallback: true };

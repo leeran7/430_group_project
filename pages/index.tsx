@@ -1,6 +1,6 @@
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
-import { getSymbols } from "./game/[slug]";
+import { getSymbols, getPricing } from "./game/[slug]";
 import { RawgApiClient, Game } from "../components/rawgApiClient";
 import { useUser } from "../firebase";
 import { pick } from "lodash";
@@ -33,6 +33,9 @@ const Home: NextPage<Props> = ({ games }) => {
                           />
                         </div>
                         <h3 className="text-sm text-gray-700">{game.name}</h3>
+                        <p className="text-md font-medium text-gray-800">
+                          Price: {getPricing(game.released, game.rating)}
+                        </p>
                         <p className="text-lg font-medium text-gray-900">
                           Release Date: {game.released}
                         </p>
