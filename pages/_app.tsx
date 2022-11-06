@@ -23,20 +23,20 @@ const NavBar = () => {
   return (
     <header className="bg-color4">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
-        <div className="flex w-full items-center justify-between border-b border-indigo-500 py-6 lg:border-none">
+        <div className="flex w-full items-center justify-between border-b border-indigo-500 lg:border-none">
           <div className="flex items-center">
             <Link href="/">
               <a>
                 <span className="sr-only">GAMES R US</span>
-                <img className="h-16 w-auto" src="/logo.png" alt="" />
+                <img className="h-24 w-auto" src="/logo.png" alt="" />
               </a>
             </Link>
-            <div className="ml-10 hidden space-x-8 lg:block ">
+            <div className="ml-10 hidden space-x-8 lg:block">
               {navigation.map((link) => {
                 if (!link.show) return null;
                 return (
                   <Link key={link.name} href={link.href}>
-                    <a className="text-xl font-medium text-white hover:underline transition-all ease-in-out duration-100 hover:text-indigo-50 ">
+                    <a className="text-lg font-medium text-white hover:underline transition-all ease-in-out duration-100 hover:text-indigo-50">
                       {link.name}
                     </a>
                   </Link>
@@ -51,13 +51,13 @@ const NavBar = () => {
                 onClick={async () => {
                   await logout();
                 }}
-                className="inline-block rounded-full border border-transparent bg-color1 py-2 px-4 text-xl font-medium text-white hover:bg-opacity-75"
+                className="inline-block rounded-full border border-transparent bg-color1 py-2 px-4 text-lg font-medium transition-colors ease-in-out text-white hover:bg-opacity-75"
               >
                 Logout
               </button>
             ) : (
               <Link href="/login">
-                <a className="inline-block rounded-full border border-transparent bg-color1 py-2 px-4 text-xl font-medium text-white hover:bg-opacity-75 ">
+                <a className="inline-block rounded-full border border-transparent bg-color1 py-3 px-6 text-lg font-medium text-white hover:bg-opacity-75 ">
                   Sign in
                 </a>
               </Link>
