@@ -15,16 +15,13 @@ const Home: NextPage<Props> = ({ games }) => {
     <div>
       <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <h1 className="sr-only">Products</h1>
-        <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           {games.length > 0
             ? games?.map((game) => {
                 return (
-                  <span
-                    className="relative flex flex-col pb-16 md:pb-5"
-                    key={game.id}
-                  >
+                  <span className="relative flex flex-col" key={game.id}>
                     <Link href={`/game/${game.id}`}>
-                      <a className="group flex flex-col gap-y-1 px-2 hover:shadow-2xl rounded-lg shadow-gray-300 hover:scale-110 p-6 transition-all">
+                      <a className="group flex flex-col gap-y-1 p-2 hover:shadow-2xl rounded-lg shadow-gray-300 hover:scale-110 transition-all ease-in-out">
                         <div className="flex flex-col overflow-hidden rounded-lg bg-gray-200">
                           <img
                             src={game.background_image}
