@@ -141,7 +141,7 @@ export const getPricing = (releaseDate: string, rating: number) => {
   let price = null;
   if (releaseDate.includes("2022")) {
     price = "$69.99";
-  } else if (rating >= 4) {
+  } else if (rating >= 4.5) {
     price = "$59.99";
   } else if (rating >= 3) {
     price = "$49.99";
