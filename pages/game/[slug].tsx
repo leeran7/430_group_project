@@ -143,11 +143,11 @@ export const getPricing = (releaseDate: string, rating: number) => {
     price = "$69.99";
   } else if (rating >= 4.5) {
     price = "$59.99";
-  } else if (rating >= 3) {
+  } else if (rating >= 4.2) {
     price = "$49.99";
-  } else if (rating >= 2) {
+  } else if (rating >= 3.7) {
     price = "$39.99";
-  } else if (rating >= 1) {
+  } else if (rating >= 3.2) {
     price = "$29.99";
   } else {
     price = "$19.99";
