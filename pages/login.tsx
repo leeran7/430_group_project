@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { login, register, useUser, addUser } from "../firebase";
-import User from "../userType";
+import { login, register, useUser, addUser } from "../components/firebase";
+import { User } from "../types";
 
 const Login: NextPage = () => {
   const [user] = useUser();
@@ -64,11 +64,6 @@ const LoginForm: React.FC<{ setGettingStarted: (v: boolean) => void }> = ({
       <div className="flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div>
-            <img
-              className="h-12 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-              alt="Your Company"
-            />
             <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
               {isRegister ? "Create an account" : "Sign in to your account"}
             </h2>
@@ -201,7 +196,7 @@ const LoginForm: React.FC<{ setGettingStarted: (v: boolean) => void }> = ({
       <div className="relative hidden w-0 flex-1 lg:block">
         <img
           className="absolute inset-0 h-full w-full object-cover"
-          src="https://images.unsplash.com/photo-1505904267569-f02eaeb45a4c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
+          src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2371&q=80"
           alt=""
         />
       </div>

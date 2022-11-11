@@ -1,34 +1,33 @@
+import { CarouselWithLabel } from "../../components/CarouselWithLabel";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import {
-  FaPlaystation,
-  FaXbox,
-  FaDesktop,
-  FaLinux,
-  FaReddit,
-} from "react-icons/fa";
-import { RawgApiClient, Game } from "../../components/rawgApiClient";
+import { FaReddit } from "react-icons/fa";
+import { RawgApiClient } from "../../components/rawgApiClient";
+import { Game } from "../../types";
 import { useRouter } from "next/router";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
-
+import { getPricing, getSymbols } from "../../components/lib";
+import { CgSpinner } from "react-icons/cg";
 const Home: NextPage<Props> = ({ game }) => {
-  const router = useRouter();
-  if (router.isFallback) return <div>loading...</div>;
+  const { isFallback } = useRouter();
+  if (isFallback || !game) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-3xl font-bold">Loading...</h1>
+        <CgSpinner className="animate-spin" size="98px" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
       <Carousel autoPlay className="object-cover h-1/2 w-full">
-        <div>
-          <img src={game.background_image} alt="background image" />
-          <p className="legend">{game.name}</p>
-        </div>
-        <div>
-          <img
-            src={game.background_image_additional}
-            alt="background image alternate"
-          />
-          <p className="legend">{game.name}</p>
-        </div>
+        {[game.background_image, game.background_image_additional].map((i) => (
+          <div key={i}>
+            <img src={i} alt={game.name} />
+            <p className="legend">{game.name}</p>
+          </div>
+        ))}
       </Carousel>
 
       <div className="grid grid-cols-3 absolute gap-x-5 mx-20">
@@ -64,95 +63,26 @@ const Home: NextPage<Props> = ({ game }) => {
                 .map((platform) => platform.platform.name)
                 .map(getSymbols)}
             </span>
-
-            <a
-              href={game.reddit_url}
-              className="text-2xl hover:text-indigo-600"
-            >
-              <FaReddit />
-            </a>
+            {game.reddit_url && (
+              <a
+                href={game.reddit_url}
+                className="text-2xl hover:text-indigo-600"
+              >
+                <FaReddit />
+              </a>
+            )}
           </div>
         </div>
-        <span>
-          <h2 className="text-center text-2xl">Developers</h2>
-          <Carousel autoPlay>
-            {game.developers.map((d) => (
-              <div key={d.slug}>
-                <p className="legend">{d.name}</p>
-                <img
-                  src={d.image_background}
-                  alt="developers background image"
-                />
-              </div>
-            ))}
-          </Carousel>
-        </span>
-        <span>
-          <h2 className="text-center text-2xl">Tags</h2>
-          <Carousel autoPlay>
-            {game.tags.map((t) => (
-              <div key={t.slug}>
-                <p className="legend">{t.name}</p>
-                <img src={t.image_background} alt={t.name} />
-              </div>
-            ))}
-          </Carousel>
-        </span>
-        <span>
-          <h2 className="text-center text-2xl">Genres</h2>
-          <Carousel autoPlay>
-            {game.genres.map((g) => (
-              <div key={g.slug}>
-                <p className="legend">{g.name}</p>
-                <img src={g.image_background} alt={g.name} />
-              </div>
-            ))}
-          </Carousel>
-        </span>
+        <CarouselWithLabel type={game.developers} label="Developers" />
+        <CarouselWithLabel type={game.tags} label="Tags" />
+        <CarouselWithLabel type={game.genres} label="Genres" />
       </div>
     </div>
   );
 };
 
-export const getSymbols = (platform: string) => {
-  let symb = null;
-  if (platform.includes("PlayStation")) {
-    symb = <FaPlaystation />;
-  } else if (platform.includes("Xbox")) {
-    symb = <FaXbox />;
-  } else if (platform.includes("PC")) {
-    symb = <FaDesktop />;
-  } else if (platform.includes("Linux")) {
-    symb = <FaLinux />;
-  }
-  const number = platform.match(/\d+/g);
-  return (
-    <p key={platform} className="flex text-lg items-center justify-center">
-      {symb}
-      <sup>{platform.includes("One") ? 1 : number}</sup>
-    </p>
-  );
-};
-type Props = {
+export type Props = {
   game: Game;
-};
-
-export const getPricing = (releaseDate: string, rating: number) => {
-  let price = null;
-  if (releaseDate.includes("2022")) {
-    price = "$69.99";
-  } else if (rating >= 4.5) {
-    price = "$59.99";
-  } else if (rating >= 4.2) {
-    price = "$49.99";
-  } else if (rating >= 3.7) {
-    price = "$39.99";
-  } else if (rating >= 3.2) {
-    price = "$29.99";
-  } else {
-    price = "$19.99";
-  }
-  return price;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {

@@ -3,7 +3,7 @@ import "../globals.css";
 import type { AppProps } from "next/app";
 import { PropsWithChildren } from "react";
 import Link from "next/link";
-import { useUser, logout } from "../firebase";
+import { logout, useUser } from "../components/firebase";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -12,6 +12,21 @@ function MyApp({ Component, pageProps }: AppProps) {
     </PageLayout>
   );
 }
+
+const PageLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
+  return (
+    <div className="flex flex-col">
+      <Head>
+        <title>Games-R-Us</title>
+        <meta name="description" content="Games-R-Us" />
+        <link rel="icon" href="/logo.png" />
+      </Head>
+      <NavBar />
+      <main className="flex-grow">{children}</main>
+      <footer></footer>
+    </div>
+  );
+};
 
 const NavBar = () => {
   const [user] = useUser();
@@ -51,46 +66,35 @@ const NavBar = () => {
                 onClick={async () => {
                   await logout();
                 }}
-                className="inline-block rounded-full border border-transparent bg-color1 py-2 px-4 text-lg font-medium transition-colors ease-in-out text-white hover:bg-opacity-75"
+                className={AuthButtonStyles}
               >
                 Logout
               </button>
             ) : (
               <Link href="/login">
-                <a className="inline-block rounded-full border border-transparent bg-color1 py-3 px-6 text-lg font-medium text-white hover:bg-opacity-75 ">
-                  Sign in
-                </a>
+                <a className={AuthButtonStyles}>Login</a>
               </Link>
             )}
           </div>
         </div>
         <div className="flex flex-wrap justify-center space-x-6 py-4 lg:hidden">
-          {navigation.map((link) => (
-            <Link key={link.name} href={link.href}>
-              <a className="text-base font-medium text-white hover:text-indigo-50">
-                {link.name}
-              </a>
-            </Link>
-          ))}
+          {navigation.map((link) => {
+            if (!link.show) return null;
+            return (
+              <Link key={link.name} href={link.href}>
+                <a className="text-base font-medium text-white hover:text-indigo-50">
+                  {link.name}
+                </a>
+              </Link>
+            );
+          })}
         </div>
       </nav>
     </header>
   );
 };
 
-const PageLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
-  return (
-    <div className="flex flex-col">
-      <Head>
-        <title>Games-R-Us</title>
-        <meta name="description" content="Games-R-Us" />
-        <link rel="icon" href="/logo.png" />
-      </Head>
-      <NavBar />
-      <main className="flex-grow">{children}</main>
-      <footer></footer>
-    </div>
-  );
-};
+const AuthButtonStyles =
+  "inline-block rounded-full border border-transparent bg-color1 py-2 px-4 text-lg font-medium transition-colors ease-in-out text-white hover:bg-opacity-75";
 
 export default MyApp;

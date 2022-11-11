@@ -15,7 +15,7 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore/lite";
-import User from "./userType";
+import { User } from "../types";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDLXkpVoC6kGsJ9w5d-bRVQR9gcHsJwD6g",
