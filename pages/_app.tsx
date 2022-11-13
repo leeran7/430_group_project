@@ -39,9 +39,9 @@ const NavBar = () => {
   ];
 
   return (
-    <header className="bg-color4">
+    <header className="bg-[#0E3276]">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
-        <div className="flex w-full items-center justify-between border-b border-indigo-500 lg:border-none">
+        <div className="flex w-full items-center justify-between border-b border-[#0E3276]-500 lg:border-none">
           <div className="flex items-center">
             <Link href="/">
               <a>
@@ -54,7 +54,7 @@ const NavBar = () => {
                 if (!link.show) return null;
                 return (
                   <Link key={link.name} href={link.href}>
-                    <a className="text-lg font-medium text-white hover:underline transition-all ease-in-out duration-100 hover:text-indigo-50">
+                    <a className="text-lg font-medium text-white hover:underline transition-all ease-in-out duration-100 hover:text-[#0E3276]-50">
                       {link.name}
                     </a>
                   </Link>
@@ -87,7 +87,7 @@ const NavBar = () => {
             if (!link.show) return null;
             return (
               <Link key={link.name} href={link.href}>
-                <a className="text-base font-medium text-white hover:text-indigo-50">
+                <a className="text-base font-medium text-white hover:text-[#0E3276]-50">
                   {link.name}
                 </a>
               </Link>
@@ -104,7 +104,7 @@ const SearchBar = () => {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="max-w-md">
+    <div className="max-w-xl rounded-full bg-white">
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -118,7 +118,7 @@ const SearchBar = () => {
           name="search"
           onChange={(e) => setSearch(e.target.value)}
           value={search}
-          className="peer cursor-pointer relative z-10 h-12 w-12 rounded-full border bg-transparent pl-12 outline-none text-white focus:w-full focus:cursor-text focus:border-gray-300 focus:pl-16 focus:pr-4"
+          className="peer cursor-pointer relative z-10 h-12 w-12 rounded-full border bg-transparent pl-12 outline-none text-black focus:w-full focus:cursor-text focus:border-gray-300 focus:pl-16 focus:pr-4 "
         />
 
         <svg
