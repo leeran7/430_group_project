@@ -81,7 +81,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   query,
 }) => {
   const rawgApiClient = new RawgApiClient();
-  const games = await rawgApiClient.getGames(query.page?.toString() ?? "1");
+  const page = query.page?.toString() ?? "1";
+
+  let games: Game[] = [];
+  if (query.search) {
+    const search = query.search.toString();
+    games = await rawgApiClient.searchGames(search, page);
+  } else {
+    games = await rawgApiClient.getGames(page);
+  }
 
   return {
     props: {

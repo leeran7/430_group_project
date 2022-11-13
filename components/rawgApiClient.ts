@@ -23,4 +23,12 @@ export class RawgApiClient {
     const game: Game = await this.get(`games/${id}`);
     return game;
   }
+
+  async searchGames(query: string, page: string) {
+    const { results } = await this.get(
+      "games",
+      `&search=${query}&page=${page}&page_size=20`
+    );
+    return results as Game[];
+  }
 }

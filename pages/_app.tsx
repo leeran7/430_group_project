@@ -1,9 +1,11 @@
 import Head from "next/head";
 import "../globals.css";
 import type { AppProps } from "next/app";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import Link from "next/link";
 import { logout, useUser } from "../components/firebase";
+import { useRouter } from "next/router";
+import { query } from "firebase/firestore/lite";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -35,6 +37,7 @@ const NavBar = () => {
     { name: "About", href: "/about", show: true },
     { name: "Wishlist", href: "/wishlist", show: !!user },
   ];
+
   return (
     <header className="bg-color4">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
@@ -60,29 +63,7 @@ const NavBar = () => {
             </div>
           </div>
 
-          <div className="mx-auto max-w-md">
-            <form action="" className="relative mx-auto w-max">
-              <input
-                type="search"
-                name="search"
-                className="peer cursor-pointer relative z-10 h-12 w-12 rounded-full border bg-transparent pl-12 outline-none text-white focus:w-full focus:cursor-text focus:border-gray-300 focus:pl-16 focus:pr-4"
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="absolute inset-y-0 my-auto h-8 w-12 border-r border-transparent stroke-gray-500 px-3.5 peer-focus:border-gray-300 peer-focus:stroke-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </form>
-          </div>
+          <SearchBar />
 
           <div className="ml-10 space-x-4">
             {user ? (
@@ -115,6 +96,47 @@ const NavBar = () => {
         </div>
       </nav>
     </header>
+  );
+};
+
+const SearchBar = () => {
+  const { push, pathname } = useRouter();
+  const [search, setSearch] = useState("");
+
+  return (
+    <div className="max-w-md">
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          await push({ pathname, query: { page: "1", search } });
+          setSearch("");
+        }}
+        className="flex relative mx-auto w-max"
+      >
+        <input
+          type="search"
+          name="search"
+          onChange={(e) => setSearch(e.target.value)}
+          value={search}
+          className="peer cursor-pointer relative z-10 h-12 w-12 rounded-full border bg-transparent pl-12 outline-none text-white focus:w-full focus:cursor-text focus:border-gray-300 focus:pl-16 focus:pr-4"
+        />
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="absolute inset-y-0 my-auto h-8 w-12 border-r border-transparent stroke-gray-500 px-3.5 peer-focus:border-gray-300 peer-focus:stroke-gray-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </form>
+    </div>
   );
 };
 
