@@ -1,4 +1,5 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { NextPage } from "next";
+import { useState, useEffect } from "react";
 import { RawgApiClient } from "../components/rawgApiClient";
 import { Game } from "../types";
 import { useUser } from "../components/firebase";
@@ -7,14 +8,27 @@ import { useRouter } from "next/router";
 import { Button } from "../components/PageButton";
 import Link from "next/link";
 import { getPricing, getSymbols } from "../components/lib";
+import { CgSpinner } from "react-icons/cg";
 
-const Home: NextPage<Props> = ({ games }) => {
+const Home: NextPage = () => {
   const [user] = useUser();
-  const router = useRouter();
-  const { query } = router;
+  const { games, loading, query } = useGetGames();
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-3xl font-bold">Loading...</h1>
+        <CgSpinner className="animate-spin" size="98px" />
+      </div>
+    );
+  }
   return (
-    <div>
+    <div className="flex flex-col">
+      <div className="flex gap-x-10 items-center justify-center text-center py-10 w-full">
+        <Button label="Previous" />
+        <p>Page {query.page ?? 1}</p>
+        <Button isNext label="Next Page" />
+      </div>
       <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <h1 className="sr-only">Products</h1>
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
@@ -22,12 +36,12 @@ const Home: NextPage<Props> = ({ games }) => {
             ? games?.map((game) => (
                 <span key={game.id} className="relative flex flex-col">
                   <Link href={`/game/${game.id}`}>
-                    <a className="group flex flex-col gap-y-1 p-2 hover:shadow-2xl rounded-lg shadow-gray-300 hover:scale-110 transition-all ease-in-out">
+                    <a className="group flex flex-col gap-y-1 p-2 hover:shadow-md focus:shadow-md hover:md:shadow-2xl  rounded-lg shadow-gray-300 hover:sm:scale-110 transition-all ease-in-out">
                       <div className="flex flex-col overflow-hidden rounded-lg bg-gray-200">
                         <img
                           src={game.background_image}
                           alt={game.name}
-                          className="h-40"
+                          className="h-52 sm:h-40"
                         />
                       </div>
                       <h3 className="text-gray-700 font-semibold">
@@ -70,22 +84,27 @@ const Home: NextPage<Props> = ({ games }) => {
   );
 };
 
-export type Props = {
-  games: Pick<
-    Game,
-    "id" | "name" | "platforms" | "rating" | "released" | "background_image"
-  >[];
-};
+const useGetGames = () => {
+  const [games, setGames] = useState<Props["games"]>([]);
+  const [loading, setLoading] = useState(true);
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({
-  query,
-}) => {
-  const rawgApiClient = new RawgApiClient();
-  const games = await rawgApiClient.getGames(query.page?.toString() ?? "1");
+  const { query } = useRouter();
 
-  return {
-    props: {
-      games:
+  const page = query.page?.toString() ?? "1";
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const rawgApiClient = new RawgApiClient();
+      let games: Game[] = [];
+
+      if (query.search) {
+        const search = query.search.toString();
+        games = await rawgApiClient.searchGames(search, page);
+      } else {
+        games = await rawgApiClient.getGames(page);
+      }
+
+      const mappedGames =
         games.map((game) =>
           pick(game, [
             "id",
@@ -95,9 +114,22 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
             "released",
             "background_image",
           ])
-        ) ?? [],
-    },
-  };
+        ) ?? [];
+      setGames(mappedGames);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [query.page, query.search, page]);
+
+  return { games, loading, query };
+};
+
+export type Props = {
+  games: Pick<
+    Game,
+    "id" | "name" | "platforms" | "rating" | "released" | "background_image"
+  >[];
 };
 
 export default Home;

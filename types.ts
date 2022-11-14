@@ -46,7 +46,7 @@ export type Game = {
   stores: Store[];
   clip: null;
   tags: Tag[];
-  esrb_rating: EsrbRating;
+  esrb_rating?: EsrbRating;
   short_screenshots: ShortScreenshot[];
 };
 

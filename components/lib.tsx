@@ -1,6 +1,8 @@
 import { FaPlaystation, FaXbox, FaDesktop, FaLinux } from "react-icons/fa";
 
-export const getPricing = (releaseDate: string, rating: number) => {
+export const getPricing = (releaseDate: string | null, rating: number) => {
+  if (!releaseDate || rating === 0) return "$19.99";
+
   let price = null;
   if (releaseDate.includes("2022")) {
     price = "$69.99";

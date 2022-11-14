@@ -49,7 +49,7 @@ const Home: NextPage<Props> = ({ game }) => {
               Release Date: <span className="semi-bold">{game.released}</span>
             </p>
 
-            <p>Rating: {game.rating}</p>
+            {game.rating && <p>Rating: {game.rating}</p>}
             <div className="flex gap-x-3">
               {game.ratings.map((r) => (
                 <div key={r.id} className="capitalize">
@@ -57,7 +57,9 @@ const Home: NextPage<Props> = ({ game }) => {
                 </div>
               ))}
             </div>
-            <p>ESRB Rating: {game.esrb_rating.name}</p>
+            {game.esrb_rating?.name ? (
+              <p>ESRB Rating: {game.esrb_rating.name}</p>
+            ) : null}
             <span className="flex gap-x-3">
               {game.platforms
                 .map((platform) => platform.platform.name)

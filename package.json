@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.12",
+    "clsx": "^1.2.1",
     "firebase": "^9.12.1",
     "lodash": "^4.17.21",
     "next": "12.3.0",
