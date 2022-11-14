@@ -32,6 +32,7 @@ const PageLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
 
 const NavBar = () => {
   const [user] = useUser();
+  const { pathname } = useRouter();
   const navigation = [
     { name: "Home", href: "/", show: true },
     { name: "About", href: "/about", show: true },
@@ -46,7 +47,7 @@ const NavBar = () => {
             <Link href="/">
               <a>
                 <span className="sr-only">GAMES R US</span>
-                <img className="h-24 w-auto" src="/logo.png" alt="" />
+                <img className="h-16 sm:h-24 w-auto" src="/logo.png" alt="" />
               </a>
             </Link>
             <div className="ml-10 hidden space-x-8 lg:block">
@@ -63,7 +64,13 @@ const NavBar = () => {
             </div>
           </div>
 
-          <SearchBar />
+          {pathname === "/" && (
+            <div className="flex items-center justify-center text-center lg:mr-24 flex-grow">
+              <div className="sm:mr-12 lg:mr-32">
+                <SearchBar />
+              </div>
+            </div>
+          )}
 
           <div className="ml-10 space-x-4">
             {user ? (
@@ -104,26 +111,26 @@ const SearchBar = () => {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="max-w-xl rounded-full bg-white">
+    <div className="rounded-full bg-white">
       <form
         onSubmit={async (e) => {
           e.preventDefault();
           await push({ pathname, query: { page: "1", search } });
           setSearch("");
         }}
-        className="flex relative mx-auto w-max"
+        className="flex relative w-full"
       >
         <input
           type="search"
           name="search"
           onChange={(e) => setSearch(e.target.value)}
           value={search}
-          className="peer cursor-pointer relative z-10 h-12 w-12 rounded-full border bg-transparent pl-12 outline-none text-black focus:w-full focus:cursor-text focus:border-gray-300 focus:pl-16 focus:pr-4 "
+          className="peer cursor-pointer relative z-10 h-12 w-24 rounded-full bg-transparent pl-8 outline-none text-black focus:w-48 focus:sm:w-64 focus:cursor-text focus:border-gray-300 focus:pl-16 focus:pr-4 transition-all ease-in duration-300"
         />
 
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="absolute inset-y-0 my-auto h-8 w-12 border-r border-transparent stroke-gray-500 px-3.5 peer-focus:border-gray-300 peer-focus:stroke-gray-500"
+          className="absolute inset-y-0 my-auto h-8 w-12 border-r border-transparent stroke-gray-500 px-3.5 peer-focus:border-gray-300 peer-focus:stroke-gray-500 transition-all ease-in duration-300"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

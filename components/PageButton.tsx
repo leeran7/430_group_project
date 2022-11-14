@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useRouter } from "next/router";
 
 export const Button: React.FC<{
@@ -5,12 +6,11 @@ export const Button: React.FC<{
   isNext?: boolean;
 }> = ({ label, isNext = false }) => {
   const { push, query, pathname } = useRouter();
+  const disabled = (query.page === "1" && !isNext) || (!query.page && !isNext);
 
-  if (query.page === "1" && !isNext) return null;
-  if (!query.page && !isNext) return null;
   return (
     <button
-      className="bg-gray-200 hover:bg-gray-300 py-2 px-5 rounded"
+      type="button"
       onClick={async () => {
         const page = query.page ? parseInt(query.page as string) : 1;
         const newPage = isNext ? page + 1 : page - 1;
@@ -18,6 +18,11 @@ export const Button: React.FC<{
 
         await push({ pathname, query: { page: newPage, search } });
       }}
+      className={clsx(
+        "px-4 py-2 rounded-full text-white font-medium hover:bg-color2",
+        disabled ? "opacity-50 cursor-not-allowed" : "bg-[#0E3276]"
+      )}
+      disabled={disabled}
     >
       {label}
     </button>
