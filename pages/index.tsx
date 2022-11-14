@@ -1,4 +1,4 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { NextPage } from "next";
 import { useState, useEffect } from "react";
 import { RawgApiClient } from "../components/rawgApiClient";
 import { Game } from "../types";
