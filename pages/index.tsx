@@ -1,4 +1,5 @@
 import type { GetServerSideProps, NextPage } from "next";
+import { useState, useEffect } from "react";
 import { RawgApiClient } from "../components/rawgApiClient";
 import { Game } from "../types";
 import { useUser } from "../components/firebase";
@@ -7,12 +8,20 @@ import { useRouter } from "next/router";
 import { Button } from "../components/PageButton";
 import Link from "next/link";
 import { getPricing, getSymbols } from "../components/lib";
+import { CgSpinner } from "react-icons/cg";
 
-const Home: NextPage<Props> = ({ games }) => {
+const Home: NextPage = () => {
   const [user] = useUser();
-  const router = useRouter();
-  const { query } = router;
+  const { games, loading, query } = useGetGames();
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-3xl font-bold">Loading...</h1>
+        <CgSpinner className="animate-spin" size="98px" />
+      </div>
+    );
+  }
   return (
     <div>
       <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -70,30 +79,25 @@ const Home: NextPage<Props> = ({ games }) => {
   );
 };
 
-export type Props = {
-  games: Pick<
-    Game,
-    "id" | "name" | "platforms" | "rating" | "released" | "background_image"
-  >[];
-};
+const useGetGames = () => {
+  const [games, setGames] = useState<Props["games"]>([]);
+  const [loading, setLoading] = useState(true);
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({
-  query,
-}) => {
-  const rawgApiClient = new RawgApiClient();
+  const { query } = useRouter();
+
   const page = query.page?.toString() ?? "1";
 
-  let games: Game[] = [];
-  if (query.search) {
-    const search = query.search.toString();
-    games = await rawgApiClient.searchGames(search, page);
-  } else {
-    games = await rawgApiClient.getGames(page);
-  }
-
-  return {
-    props: {
-      games:
+  useEffect(() => {
+    const fetchData = async () => {
+      const rawgApiClient = new RawgApiClient();
+      let games: Game[] = [];
+      if (query.search) {
+        const search = query.search.toString();
+        games = await rawgApiClient.searchGames(search, page);
+      } else {
+        games = await rawgApiClient.getGames(page);
+      }
+      const mappedGames =
         games.map((game) =>
           pick(game, [
             "id",
@@ -103,9 +107,21 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
             "released",
             "background_image",
           ])
-        ) ?? [],
-    },
-  };
+        ) ?? [];
+      setGames(mappedGames);
+      setLoading(false);
+    };
+    fetchData();
+  }, [query.page, query.search, page]);
+
+  return { games, loading, query };
+};
+
+export type Props = {
+  games: Pick<
+    Game,
+    "id" | "name" | "platforms" | "rating" | "released" | "background_image"
+  >[];
 };
 
 export default Home;
