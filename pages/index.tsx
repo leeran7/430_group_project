@@ -31,14 +31,17 @@ const Home: NextPage = () => {
         <p>Page {query.page ?? 1}</p>
         <Button isNext label="Next Page" />
       </div>
-      <div className="mx-auto max-w-2xl pb-16 pt-10 px-4 sm:pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
+      <div className="pb-16 pt-10 px-4 sm:pb-24 sm:px-6 w-full lg:px-32">
         <h1 className="sr-only">Products</h1>
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8">
           {games.length > 0
             ? games?.map((game) => (
-                <span key={game.id} className="relative flex flex-col">
+                <span
+                  key={game.id}
+                  className="relative flex flex-col z-20 shadow-md rounded-lg focus:shadow-md hover:md:shadow-2xl shadow-gray-300 hover:sm:scale-110"
+                >
                   <Link href={`/game/${game.id}`}>
-                    <a className="group flex flex-col gap-y-1 p-2 hover:shadow-md focus:shadow-md hover:md:shadow-2xl  rounded-lg shadow-gray-300 hover:sm:scale-110 transition-all ease-in-out">
+                    <a className="group flex flex-col gap-y-1 p-2 transition-all ease-in-out">
                       <div className="flex flex-col overflow-hidden rounded-lg bg-gray-200">
                         <img
                           src={game.background_image}
@@ -52,15 +55,9 @@ const Home: NextPage = () => {
                       <p className="text-gray-800">
                         Price: {getPricing(game.released, game.rating)}
                       </p>
-                      <p className="text-gray-900">
-                        Release Date: {game.released}
+                      <p className="flex text-xs gap-x-1">
+                        Rating: {game.rating} / 5
                       </p>
-                      <p className="flex gap-x-1">Rating: {game.rating} / 5</p>
-                      <span className="flex gap-x-1">
-                        {game.platforms
-                          .map((platform) => platform.platform.name)
-                          .map(getSymbols)}
-                      </span>
                     </a>
                   </Link>
                   {user && (
@@ -71,7 +68,7 @@ const Home: NextPage = () => {
                           price: getPricing(game.released, game.rating),
                         });
                       }}
-                      className="absolute bottom-0 right-0 py-2 px-5 z-10 bg-green-400 hover:bg-green-500 rounded"
+                      className="w-16 m-2 self-end text-center flex flex-col items-center justify-center py-2.5 z-10 bg-green-400 hover:bg-green-500 rounded"
                     >
                       <FaCartPlus />
                     </button>
