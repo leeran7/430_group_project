@@ -8,11 +8,16 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { getPricing, getSymbols } from "../../components/lib";
 import { CgSpinner } from "react-icons/cg";
+import { useUser } from "../../components/firebase";
+import { useUserCart } from "../cart";
+import { pick } from "lodash";
 
 const Home: NextPage<Props> = ({ game }) => {
+  const [user] = useUser();
+  const { loading: userLoading, onAdd } = useUserCart();
   const { isFallback } = useRouter();
 
-  if (isFallback || !game) {
+  if (isFallback || !game || userLoading) {
     return (
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-3xl font-bold">Loading...</h1>
@@ -79,7 +84,23 @@ const Home: NextPage<Props> = ({ game }) => {
               </a>
             )}
           </div>
+          {user && (
+            <div className="flex justify-end mb-10">
+              <button
+                onClick={async () => {
+                  await onAdd({
+                    ...pick(game, ["id", "name", "background_image"]),
+                    price: getPricing(game.released, game.rating),
+                  });
+                }}
+                className="absolute py-2 px-5 z-10 bg-green-400 hover:bg-green-500 rounded"
+              >
+                Add to Cart
+              </button>
+            </div>
+          )}
         </div>
+
         <CarouselWithLabel type={game.developers} label="Developers" />
         <CarouselWithLabel type={game.tags} label="Tags" />
         <CarouselWithLabel type={game.genres} label="Genres" />
