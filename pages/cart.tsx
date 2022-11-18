@@ -33,7 +33,7 @@ const Cart: NextPage = () => {
             <h3 className="font-semibold text-gray-600 text-xs uppercase w-2/5">
               Product Details
             </h3>
-            <h3 className="font-semibold text-center text-gray-600 text-xs uppercase w-1/5">
+            <h3 className="font-semibold text-center text-gray-600 text-xs uppercase w-4/5">
               Price
             </h3>
           </div>
@@ -44,9 +44,17 @@ const Cart: NextPage = () => {
               className="flex items-center hover:bg-gray-100 -mx-8 px-6 py-5"
             >
               <div className="flex w-2/5">
-                <div className="w-20">
-                  <img className="h-24" src={item.background_image} alt="" />
-                </div>
+                <Link href={`/game/${item.id}`}>
+                  <a className="hover:shadow-md focus:shadow-md hover:md:shadow-2xl shadow-gray-300 hover:sm:scale-110 transition-all ease-in-out">
+                    <div className="w-18">
+                      <img
+                        className="h-24 rounded-lg"
+                        src={item.background_image}
+                        alt={item.name}
+                      />
+                    </div>
+                  </a>
+                </Link>
                 <div className="flex flex-col justify-between ml-4 flex-grow">
                   <span className="font-bold text-sm">{item.name}</span>
 
@@ -58,7 +66,7 @@ const Cart: NextPage = () => {
                   </button>
                 </div>
               </div>
-              <span className="text-center w-1/5 font-semibold text-sm">
+              <span className="text-center w-4/5 font-semibold text-sm">
                 {item.price}
               </span>
             </div>
@@ -92,7 +100,7 @@ const Cart: NextPage = () => {
           <div className="border-t mt-8">
             <div className="flex font-semibold justify-between pt-6 pb-1 text-sm uppercase">
               <span>Subtotal</span>
-              <span>${total}</span>
+              <span>${total.toFixed(2)}</span>
             </div>
             <div className="flex font-semibold justify-between py-1 text-sm uppercase">
               <span>Taxes</span>

@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { RawgApiClient } from "../components/rawgApiClient";
 import { Game } from "../types";
 import { useUser } from "../components/firebase";
@@ -10,6 +10,7 @@ import Link from "next/link";
 import { getPricing, getSymbols } from "../components/lib";
 import { CgSpinner } from "react-icons/cg";
 import { useUserCart } from "./cart";
+import { FaCartPlus } from "react-icons/fa";
 
 const Home: NextPage = () => {
   const [user] = useUser();
@@ -72,7 +73,7 @@ const Home: NextPage = () => {
                       }}
                       className="absolute bottom-0 right-0 py-2 px-5 z-10 bg-green-400 hover:bg-green-500 rounded"
                     >
-                      Add to Cart
+                      <FaCartPlus />
                     </button>
                   )}
                 </span>

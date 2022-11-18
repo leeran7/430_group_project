@@ -8,8 +8,10 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { getPricing, getSymbols } from "../../components/lib";
 import { CgSpinner } from "react-icons/cg";
+
 const Home: NextPage<Props> = ({ game }) => {
   const { isFallback } = useRouter();
+
   if (isFallback || !game) {
     return (
       <div className="flex flex-col items-center justify-center">
@@ -21,10 +23,13 @@ const Home: NextPage<Props> = ({ game }) => {
 
   return (
     <div className="relative">
-      <Carousel autoPlay className="object-cover h-1/2 w-full">
+      <Carousel
+        autoPlay
+        className="object-cover mt-3 ml-auto mr-auto h-1/2 w-5/6"
+      >
         {[game.background_image, game.background_image_additional].map((i) => (
           <div key={i}>
-            <img src={i} alt={game.name} />
+            <img className="rounded-md" src={i} alt={game.name} />
             <p className="legend">{game.name}</p>
           </div>
         ))}
