@@ -9,12 +9,13 @@ import { Button } from "../components/PageButton";
 import Link from "next/link";
 import { getPricing, getSymbols } from "../components/lib";
 import { CgSpinner } from "react-icons/cg";
+import { useUserCart } from "./cart";
 
 const Home: NextPage = () => {
   const [user] = useUser();
   const { games, loading, query } = useGetGames();
-
-  if (loading) {
+  const { loading: userLoading, onAdd } = useUserCart();
+  if (loading || userLoading) {
     return (
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-3xl font-bold">Loading...</h1>
@@ -29,7 +30,7 @@ const Home: NextPage = () => {
         <p>Page {query.page ?? 1}</p>
         <Button isNext label="Next Page" />
       </div>
-      <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+      <div className="mx-auto max-w-2xl pb-16 pt-10 px-4 sm:pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <h1 className="sr-only">Products</h1>
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           {games.length > 0
@@ -63,10 +64,15 @@ const Home: NextPage = () => {
                   </Link>
                   {user && (
                     <button
-                      onClick={() => alert(game.id)}
+                      onClick={async () => {
+                        await onAdd({
+                          ...pick(game, ["id", "name", "background_image"]),
+                          price: getPricing(game.released, game.rating),
+                        });
+                      }}
                       className="absolute bottom-0 right-0 py-2 px-5 z-10 bg-green-400 hover:bg-green-500 rounded"
                     >
-                      Add to cart
+                      Add to Cart
                     </button>
                   )}
                 </span>

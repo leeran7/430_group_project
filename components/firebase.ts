@@ -14,6 +14,7 @@ import {
   setDoc,
   getDocs,
   deleteDoc,
+  getDoc,
 } from "firebase/firestore/lite";
 import { User } from "../types";
 
@@ -33,21 +34,31 @@ const fs = getFirestore(app);
 export const useUser = () => useAuthState(authen);
 
 async function getAllDocsFromColl(colName: string) {
-  const coll = collection(fs, colName);
-  const { docs } = await getDocs(coll);
-  return docs.map((doc) => {
-    const data = doc.data();
-    return { ...data, id: doc.id };
-  });
+  try {
+    const coll = collection(fs, colName);
+    const { docs } = await getDocs(coll);
+    return docs.map((doc) => {
+      const data = doc.data();
+      return { ...data, id: doc.id };
+    });
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-async function getAllUsers() {
+export async function getAllUsers() {
   return await getAllDocsFromColl("users");
 }
 
 export async function getUserById(id: string) {
-  const users = await getAllUsers();
-  return users.find((user) => user.id === id);
+  try {
+    const coll = collection(fs, "users");
+    const document = doc(coll, id);
+    const data = await getDoc(document);
+    return data.data();
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 export async function addUser(newUser: User) {
