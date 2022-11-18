@@ -7,10 +7,11 @@ import { pick } from "lodash";
 import { useRouter } from "next/router";
 import { Button } from "../components/PageButton";
 import Link from "next/link";
-import { getPricing, getSymbols } from "../components/lib";
+import { getPricing } from "../components/lib";
 import { CgSpinner } from "react-icons/cg";
 import { useUserCart } from "./cart";
 import { FaCartPlus } from "react-icons/fa";
+import clsx from "clsx";
 
 const Home: NextPage = () => {
   const [user] = useUser();
@@ -36,44 +37,17 @@ const Home: NextPage = () => {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8">
           {games.length > 0
             ? games?.map((game) => (
-                <span
+                <GameCard
                   key={game.id}
-                  className="relative flex flex-col z-20 shadow-md rounded-lg focus:shadow-md hover:md:shadow-2xl shadow-gray-300 hover:sm:scale-110"
-                >
-                  <Link href={`/game/${game.id}`}>
-                    <a className="group flex flex-col gap-y-1 p-2 transition-all ease-in-out">
-                      <div className="flex flex-col overflow-hidden rounded-lg bg-gray-200">
-                        <img
-                          src={game.background_image}
-                          alt={game.name}
-                          className="h-52 sm:h-40"
-                        />
-                      </div>
-                      <h3 className="text-gray-700 font-semibold">
-                        {game.name}
-                      </h3>
-                      <p className="text-gray-800">
-                        Price: {getPricing(game.released, game.rating)}
-                      </p>
-                      <p className="flex text-xs gap-x-1">
-                        Rating: {game.rating} / 5
-                      </p>
-                    </a>
-                  </Link>
-                  {user && (
-                    <button
-                      onClick={async () => {
-                        await onAdd({
-                          ...pick(game, ["id", "name", "background_image"]),
-                          price: getPricing(game.released, game.rating),
-                        });
-                      }}
-                      className="w-16 m-2 self-end text-center flex flex-col items-center justify-center py-2.5 z-10 bg-green-400 hover:bg-green-500 rounded"
-                    >
-                      <FaCartPlus />
-                    </button>
-                  )}
-                </span>
+                  game={game}
+                  userExists={!!user}
+                  onAdd={async () => {
+                    await onAdd({
+                      ...pick(game, ["id", "name", "background_image"]),
+                      price: getPricing(game.released, game.rating),
+                    });
+                  }}
+                />
               ))
             : null}
         </div>
@@ -85,6 +59,69 @@ const Home: NextPage = () => {
         <Button isNext label="Next Page" />
       </div>
     </div>
+  );
+};
+
+const GameCard: React.FC<{
+  game: Props["games"][0];
+  userExists: boolean;
+  onAdd: () => void;
+}> = ({ game, userExists, onAdd }) => {
+  const [trailer, setTrailer] = useState<undefined | string>(undefined);
+  const [hovering, setHovering] = useState(false);
+
+  return (
+    <span
+      className="relative flex flex-col z-30 shadow-md rounded-lg focus:shadow-md hover:md:shadow-2xl shadow-gray-300 hover:sm:scale-110 transition-all ease-in-out"
+      onMouseOver={async () => {
+        setHovering(true);
+        if (!trailer) {
+          const rawgApiClient = new RawgApiClient();
+          const trailer = await rawgApiClient.getTrailer(game.slug);
+          if (trailer.results[0]) {
+            if (trailer.results[0]?.data?.max) {
+              setTrailer(trailer.results[0].data.max);
+            }
+          } else {
+            setTrailer(undefined);
+          }
+        }
+      }}
+      onMouseLeave={() => setHovering(false)}
+    >
+      <Link href={`/game/${game.id}`}>
+        <a className="group flex flex-col gap-y-1 p-2">
+          <div className="flex flex-col overflow-hidden rounded-lg bg-gray-200">
+            {trailer && hovering ? (
+              <video controls muted autoPlay src={trailer} />
+            ) : (
+              <img
+                src={game.background_image}
+                alt={game.name}
+                className="h-52 sm:h-40"
+              />
+            )}
+          </div>
+          <div className={clsx(trailer && hovering && "pt-4")}>
+            <h3 className="text-gray-700 font-semibold">{game.name}</h3>
+            <p className="text-gray-800">
+              Price: {getPricing(game.released, game.rating)}
+            </p>
+            <p className="flex text-xs gap-x-1">Rating: {game.rating} / 5</p>
+          </div>
+        </a>
+      </Link>
+      {userExists && (
+        <button
+          onClick={onAdd}
+          className={clsx(
+            "w-16 mr-2 self-end mb-2 text-center flex flex-col items-center justify-end py-2.5 z-10 bg-green-400 hover:bg-green-500 rounded"
+          )}
+        >
+          <FaCartPlus />
+        </button>
+      )}
+    </span>
   );
 };
 
@@ -117,6 +154,7 @@ const useGetGames = () => {
             "rating",
             "released",
             "background_image",
+            "slug",
           ])
         ) ?? [];
       setGames(mappedGames);
@@ -132,7 +170,13 @@ const useGetGames = () => {
 export type Props = {
   games: Pick<
     Game,
-    "id" | "name" | "platforms" | "rating" | "released" | "background_image"
+    | "id"
+    | "name"
+    | "platforms"
+    | "rating"
+    | "released"
+    | "background_image"
+    | "slug"
   >[];
 };
 
