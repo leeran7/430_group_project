@@ -5,7 +5,7 @@ import { PropsWithChildren, useState } from "react";
 import Link from "next/link";
 import { logout, useUser } from "../components/firebase";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
