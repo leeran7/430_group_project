@@ -36,6 +36,7 @@ const NavBar = () => {
     { name: "Home", href: "/", show: true },
     { name: "About", href: "/about", show: true },
     { name: "Wishlist", href: "/wishlist", show: !!user },
+    { name: "Cart", href: "/cart", show: !!user },
   ];
 
   return (
