@@ -56,12 +56,11 @@ const Cart: NextPage = () => {
                   </a>
                 </Link>
                 <div className="flex flex-col justify-between ml-4 flex-grow">
-                  <a
-                    href={`/game/${item.id}`}
-                    className="font-bold text-sm hover:text-indigo-600"
-                  >
-                    {item.name}
-                  </a>
+                  <Link href={`/game/${item.id}`}>
+                    <a className="font-bold text-sm hover:text-indigo-600">
+                      {item.name}
+                    </a>
+                  </Link>
 
                   <button
                     className="text-left font-semibold hover:text-red-500 text-gray-500 text-xs"
