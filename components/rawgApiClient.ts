@@ -24,6 +24,11 @@ export class RawgApiClient {
     return game;
   }
 
+  async getTrailer(id: string) {
+    const trailer = await this.get(`games/${id}/movies`);
+    return trailer as { results: { data?: { max: string } }[] };
+  }
+
   async searchGames(query: string, page: string) {
     const { results } = await this.get(
       "games",

@@ -34,42 +34,7 @@ const Home: NextPage = () => {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           {games.length > 0
             ? games?.map((game) => (
-                <span key={game.id} className="relative flex flex-col">
-                  <Link href={`/game/${game.id}`}>
-                    <a className="group flex flex-col gap-y-1 p-2 hover:shadow-md focus:shadow-md hover:md:shadow-2xl  rounded-lg shadow-gray-300 hover:sm:scale-110 transition-all ease-in-out">
-                      <div className="flex flex-col overflow-hidden rounded-lg bg-gray-200">
-                        <img
-                          src={game.background_image}
-                          alt={game.name}
-                          className="h-52 sm:h-40"
-                        />
-                      </div>
-                      <h3 className="text-gray-700 font-semibold">
-                        {game.name}
-                      </h3>
-                      <p className="text-gray-800">
-                        Price: {getPricing(game.released, game.rating)}
-                      </p>
-                      <p className="text-gray-900">
-                        Release Date: {game.released}
-                      </p>
-                      <p className="flex gap-x-1">Rating: {game.rating} / 5</p>
-                      <span className="flex gap-x-1">
-                        {game.platforms
-                          .map((platform) => platform.platform.name)
-                          .map(getSymbols)}
-                      </span>
-                    </a>
-                  </Link>
-                  {user && (
-                    <button
-                      onClick={() => alert(game.id)}
-                      className="absolute bottom-0 right-0 py-2 px-5 z-10 bg-green-400 hover:bg-green-500 rounded"
-                    >
-                      Add to cart
-                    </button>
-                  )}
-                </span>
+                <GameCard key={game.id} game={game} userExists={!!user} />
               ))
             : null}
         </div>
@@ -81,6 +46,72 @@ const Home: NextPage = () => {
         <Button isNext label="Next Page" />
       </div>
     </div>
+  );
+};
+
+const GameCard: React.FC<{ game: Props["games"][0]; userExists: boolean }> = ({
+  game,
+  userExists,
+}) => {
+  const [trailer, setTrailer] = useState<undefined | string>(undefined);
+  const [hovering, setHovering] = useState(false);
+
+  return (
+    <span
+      className="relative flex flex-col"
+      onMouseOver={async () => {
+        setHovering(true);
+        if (!trailer) {
+          const rawgApiClient = new RawgApiClient();
+          const trailer = await rawgApiClient.getTrailer(game.slug);
+          if (trailer.results[0]) {
+            if (trailer.results[0]?.data?.max) {
+              setTrailer(trailer.results[0].data.max);
+            }
+          } else {
+            setTrailer(undefined);
+          }
+        }
+      }}
+      onMouseLeave={() => setHovering(false)}
+    >
+      <Link href={`/game/${game.id}`}>
+        <a className="group flex flex-col gap-y-1 p-2 hover:shadow-md focus:shadow-md hover:md:shadow-2xl rounded-lg shadow-gray-300 hover:sm:scale-125 hover:z-30 transition-all ease-in-out">
+          <div className="flex flex-col overflow-hidden rounded-lg bg-gray-200">
+            {trailer && hovering ? (
+              <video controls muted autoPlay src={trailer} />
+            ) : (
+              <img
+                src={game.background_image}
+                alt={game.name}
+                className="h-52 sm:h-40"
+              />
+            )}
+          </div>
+          <div>
+            <h3 className="text-gray-700 font-semibold">{game.name}</h3>
+            <p className="text-gray-800">
+              Price: {getPricing(game.released, game.rating)}
+            </p>
+            <p className="text-gray-900">Release Date: {game.released}</p>
+            <p className="flex gap-x-1">Rating: {game.rating} / 5</p>
+            <span className="flex gap-x-1">
+              {game.platforms
+                .map((platform) => platform.platform.name)
+                .map(getSymbols)}
+            </span>
+          </div>
+        </a>
+      </Link>
+      {userExists && (
+        <button
+          onClick={() => alert(game.id)}
+          className="absolute bottom-0 right-0 py-2 px-5 z-10 bg-green-400 hover:bg-green-500 rounded"
+        >
+          Add to cart
+        </button>
+      )}
+    </span>
   );
 };
 
@@ -113,6 +144,7 @@ const useGetGames = () => {
             "rating",
             "released",
             "background_image",
+            "slug",
           ])
         ) ?? [];
       setGames(mappedGames);
@@ -128,7 +160,13 @@ const useGetGames = () => {
 export type Props = {
   games: Pick<
     Game,
-    "id" | "name" | "platforms" | "rating" | "released" | "background_image"
+    | "id"
+    | "name"
+    | "platforms"
+    | "rating"
+    | "released"
+    | "background_image"
+    | "slug"
   >[];
 };
 

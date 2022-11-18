@@ -104,7 +104,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       notFound: true,
     };
   }
-
+  const trailer = await rawgApiClient.getTrailer(game.slug);
   return {
     props: { game },
   };
