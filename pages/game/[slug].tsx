@@ -9,12 +9,12 @@ import { Carousel } from "react-responsive-carousel";
 import { getPricing, getSymbols } from "../../components/lib";
 import { CgSpinner } from "react-icons/cg";
 import { useUser } from "../../components/firebase";
-import { useUserCart } from "../cart";
+import { useUpdateUser } from "../cart";
 import { pick } from "lodash";
 
 const Home: NextPage<Props> = ({ game }) => {
   const [user] = useUser();
-  const { loading: userLoading, onAdd } = useUserCart();
+  const { loading: userLoading, onAddCartItem } = useUpdateUser();
   const { isFallback } = useRouter();
 
   if (isFallback || !game || userLoading) {
@@ -88,7 +88,7 @@ const Home: NextPage<Props> = ({ game }) => {
             <div className="flex justify-end mb-10">
               <button
                 onClick={async () => {
-                  await onAdd({
+                  await onAddCartItem({
                     ...pick(game, ["id", "name", "background_image"]),
                     price: getPricing(game.released, game.rating),
                   });
