@@ -33,9 +33,14 @@ export const getSymbols = (platform: string) => {
   }
   const number = platform.match(/\d+/g);
   return (
-    <p key={platform} className="flex text-lg items-center justify-center">
+    <p
+      key={platform}
+      className="flex gap-x-0.5 text-md items-center justify-center"
+    >
       {symb}
-      <sup>{platform.includes("One") ? 1 : number}</sup>
+      <sup>
+        {platform.includes("One") ? 1 : platform.includes("X") ? "X" : number}
+      </sup>
     </p>
   );
 };

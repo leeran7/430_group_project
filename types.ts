@@ -8,7 +8,9 @@ export type User = {
   country: string;
   emailAddress: string;
   zipcode: number;
-  cart: string[];
+  cart: (Pick<Game, "name" | "id" | "background_image"> & {
+    price: string;
+  })[];
   owned: string[];
   wishlist: string[];
 };
