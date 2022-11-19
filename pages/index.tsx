@@ -61,6 +61,7 @@ const GameCard: React.FC<{
   const { getIsInWishList, onWishlistAdd, onAddCartItem, onWishlistDelete } =
     useUpdateUser();
   const isInWishList = getIsInWishList(game.id);
+  const price = getPricing(game.released, game.rating);
   return (
     <span
       className="relative flex flex-col z-30 shadow-md rounded-lg focus:shadow-md hover:md:shadow-2xl shadow-gray-300 hover:sm:scale-110 transition-all ease-in-out"
@@ -95,9 +96,7 @@ const GameCard: React.FC<{
           </div>
           <div className={clsx(trailer && hovering && "pt-4")}>
             <h3 className="text-gray-700 font-semibold">{game.name}</h3>
-            <p className="text-gray-800">
-              Price: {getPricing(game.released, game.rating)}
-            </p>
+            <p className="text-gray-800">Price: {price}</p>
             <p className="flex text-xs gap-x-1">Rating: {game.rating} / 5</p>
           </div>
         </a>
@@ -111,7 +110,6 @@ const GameCard: React.FC<{
               } else {
                 await onWishlistAdd({
                   ...pick(game, ["id", "name", "background_image"]),
-                  price: getPricing(game.released, game.rating),
                 });
               }
             }}
@@ -138,7 +136,7 @@ const GameCard: React.FC<{
             onClick={async () => {
               await onAddCartItem({
                 ...pick(game, ["id", "name", "background_image"]),
-                price: getPricing(game.released, game.rating),
+                price,
               });
             }}
             className={clsx(

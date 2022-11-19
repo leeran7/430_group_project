@@ -182,7 +182,7 @@ export const useUpdateUser = () => {
   );
 
   const onWishlistAdd = useCallback(
-    async (game: User["cart"][0]) => {
+    async (game: User["wishlist"][0]) => {
       if (user) {
         if (getIsInWishList(game.id)) {
           toast.error("Game already in wishlist");
