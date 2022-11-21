@@ -15,7 +15,8 @@ export class RawgApiClient {
   };
 
   async getGames(page: string) {
-    const { results } = await this.get("games", `&page=${page}&page_size=20`);
+    const actualPage = (Number(page) - 1).toString();
+    const { results } = await this.get("games", `&page=${actualPage}&page_size=20`);
     return results as Game[];
   }
 
@@ -25,7 +26,7 @@ export class RawgApiClient {
   }
 
   async getRecentGames(page: string) {
-    const { results } = await this.get("games", `&ordering=-released&page=${page}&page_size=8`);
+    const { results } = await this.get("games", `&dates=2022-01-01,2022-12-31&page=${page}&page_size=8`);
     return results as Game[];
   }
 

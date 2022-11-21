@@ -12,7 +12,7 @@ import { CgSpinner } from "react-icons/cg";
 
 const Home: NextPage = () => {
   const [user] = useUser();
-  const { games, popularGames, recentGames, loading, query,} = useGetGames();
+  const { games, popularGames, recentGames, loading, query} = useGetGames();
 
 
   if (loading) {
@@ -28,11 +28,11 @@ const Home: NextPage = () => {
       <div className="flex gap-x-10 items-center justify-center text-center py-10 w-full">
         <Button label="Previous" />
         <p>Page {query.page ?? 1}</p>
-        <Button isNext label="Next Page" />
+        <Button isNext label={query.page === '1' ||!query.page ? "All Listings" : "Next Page"} />
       </div>
 
 
-      {query.page?.toString() === '1' ? (
+      {query.page === '1' ||!query.page ? (
 <div>
 
           <div>
@@ -137,7 +137,7 @@ const Home: NextPage = () => {
         
       <div>
       <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
-        <h1 className="sr-only" >Recent Games</h1>
+        <h1 className="sr-only" >Games</h1>
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           {games.length > 0
             ? games?.map((games) => (
@@ -183,7 +183,7 @@ const Home: NextPage = () => {
       </div>
       </div>
 
-)}
+    )}
 
 
 
@@ -191,7 +191,7 @@ const Home: NextPage = () => {
       <div className="flex gap-x-10 items-center justify-center text-center py-10">
         <Button label="Previous" />
         <p>Page {query.page ?? 1}</p>
-        <Button isNext label="Next Page" />
+        <Button isNext label={query.page === '1' ||!query.page ? "All Listings" : "Next Page"} />
       </div>
     </div>
   );
@@ -214,14 +214,23 @@ const useGetGames = () => {
       let popularGames: Game[] = [];
       let recentGames: Game[] = [];
 
+      setLoading(true);
+
       if (query.search) {
         const search = query.search.toString();
         games = await rawgApiClient.searchGames(search, page);
       } else {
+        if(page === "1"){
+          popularGames = await rawgApiClient.getPopularGames("1");
+          recentGames = await rawgApiClient.getRecentGames("1");
+        }
+        else{
+          games = await rawgApiClient.getGames(page);
+        }
 
-        games = await rawgApiClient.getGames(page);
-        popularGames = await rawgApiClient.getPopularGames("1");
-        recentGames = await rawgApiClient.getRecentGames("1");
+        // games = await rawgApiClient.getGames(page);
+        // popularGames = await rawgApiClient.getPopularGames("1");
+        // recentGames = await rawgApiClient.getRecentGames("1");
       }
 
       const mappedGames =
