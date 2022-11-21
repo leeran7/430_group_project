@@ -20,12 +20,12 @@ export class RawgApiClient {
   }
 
   async getPopularGames(page: string) {
-    const { results } = await this.get("games", `&ordering=-rating&page=${page}&page_size=20`);
+    const { results } = await this.get("games", `&ordering=-rating&page=${page}&page_size=12`);
     return results as Game[];
   }
 
   async getRecentGames(page: string) {
-    const { results } = await this.get("games", `&ordering=-released&page=${page}&page_size=20`);
+    const { results } = await this.get("games", `&ordering=-released&page=${page}&page_size=8`);
     return results as Game[];
   }
 
