@@ -12,7 +12,7 @@ export type User = {
     price: string;
   })[];
   owned: string[];
-  wishlist: string[];
+  wishlist: Pick<Game, "name" | "id" | "background_image">[];
 };
 
 export type Game = {

@@ -9,12 +9,19 @@ import { Carousel } from "react-responsive-carousel";
 import { getPricing, getSymbols } from "../../components/lib";
 import { CgSpinner } from "react-icons/cg";
 import { useUser } from "../../components/firebase";
-import { useUserCart } from "../cart";
+import { useUpdateUser } from "../cart";
 import { pick } from "lodash";
+import clsx from "clsx";
 
 const Home: NextPage<Props> = ({ game }) => {
   const [user] = useUser();
-  const { loading: userLoading, onAdd } = useUserCart();
+  const {
+    loading: userLoading,
+    onAddCartItem,
+    onWishlistDelete,
+    onWishlistAdd,
+    getIsInWishList,
+  } = useUpdateUser();
   const { isFallback } = useRouter();
 
   if (isFallback || !game || userLoading) {
@@ -25,7 +32,8 @@ const Home: NextPage<Props> = ({ game }) => {
       </div>
     );
   }
-
+  const isInWishList = getIsInWishList(game.id);
+  const price = getPricing(game.released, game.rating);
   return (
     <div className="relative">
       <Carousel
@@ -50,15 +58,19 @@ const Home: NextPage<Props> = ({ game }) => {
             </h1>
             <p className="tracking-wider">{game.description_raw}</p>
             <p>
-              Price:{" "}
-              <span className="semi-bold">
-                {getPricing(game.released, game.rating)}
-              </span>
+              Price: <span className="semi-bold">{price}</span>
             </p>
             <p>
               Release Date: <span className="semi-bold">{game.released}</span>
             </p>
-
+            {game.reddit_url && (
+              <a
+                href={game.reddit_url}
+                className="text-2xl hover:text-indigo-600"
+              >
+                <FaReddit />
+              </a>
+            )}
             {game.rating && <p>Rating: {game.rating}</p>}
             <div className="flex gap-x-3">
               {game.ratings.map((r) => (
@@ -75,25 +87,46 @@ const Home: NextPage<Props> = ({ game }) => {
                 .map((platform) => platform.platform.name)
                 .map(getSymbols)}
             </span>
-            {game.reddit_url && (
-              <a
-                href={game.reddit_url}
-                className="text-2xl hover:text-indigo-600"
-              >
-                <FaReddit />
-              </a>
-            )}
           </div>
           {user && (
-            <div className="flex justify-end mb-10">
+            <div className="flex justify-end">
               <button
                 onClick={async () => {
-                  await onAdd({
+                  if (isInWishList) {
+                    await onWishlistDelete(game.id);
+                  } else {
+                    await onWishlistAdd({
+                      ...pick(game, ["id", "name", "background_image"]),
+                    });
+                  }
+                }}
+                className={clsx(
+                  "mr-4 py-2 px-5 self-end text-center flex flex-col items-center justify-end z-10 rounded fill-red-600 border-2 border-transparent hover:border-red-600",
+                  isInWishList && "border-red-600 hover:bg-red-100"
+                )}
+                type="button"
+              >
+                <svg
+                  className="w-6 h-6 "
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </button>
+              <button
+                onClick={async () => {
+                  await onAddCartItem({
                     ...pick(game, ["id", "name", "background_image"]),
-                    price: getPricing(game.released, game.rating),
+                    price,
                   });
                 }}
-                className="absolute py-2 px-5 z-10 bg-green-400 hover:bg-green-500 rounded"
+                className="py-2 px-5 z-10 bg-green-400 hover:bg-green-500 rounded"
               >
                 Add to Cart
               </button>
