@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import React, { useState, useEffect } from "react";
 import { RawgApiClient } from "../components/rawgApiClient";
-import { Game } from "../types";
+import { Game, User } from "../types";
 import { useUser } from "../components/firebase";
 import { pick } from "lodash";
 import { useRouter } from "next/router";
@@ -16,8 +16,8 @@ import clsx from "clsx";
 const Home: NextPage = () => {
   const [user] = useUser();
   const { games, loading, query } = useGetGames();
-  const { loading: userLoading } = useUpdateUser();
-  if (loading || userLoading) {
+
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-3xl font-bold">Loading...</h1>
@@ -52,8 +52,8 @@ const Home: NextPage = () => {
   );
 };
 
-const GameCard: React.FC<{
-  game: Props["games"][0];
+export const GameCard: React.FC<{
+  game: Props["games"][0] | User["wishlist"][0];
   userExists: boolean;
 }> = ({ game, userExists }) => {
   const [trailer, setTrailer] = useState<undefined | string>(undefined);
@@ -109,7 +109,8 @@ const GameCard: React.FC<{
                 await onWishlistDelete(game.id);
               } else {
                 await onWishlistAdd({
-                  ...pick(game, ["id", "name", "background_image"]),
+                  ...game,
+                  price,
                 });
               }
             }}

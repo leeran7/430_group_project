@@ -174,6 +174,12 @@ export const useUpdateUser = () => {
     [user, userInfo]
   );
 
+  const getWishlist = useCallback(() => {
+    if (user) {
+      return userInfo.wishlist;
+    }
+  }, [user, userInfo]);
+
   const getIsInWishList = useCallback(
     (id: number) => {
       return !!userInfo?.wishlist?.find((item) => item.id === id);
@@ -183,6 +189,7 @@ export const useUpdateUser = () => {
 
   const onWishlistAdd = useCallback(
     async (game: User["wishlist"][0]) => {
+      setLoading(true);
       if (user) {
         if (getIsInWishList(game.id)) {
           toast.error("Game already in wishlist");
@@ -199,6 +206,7 @@ export const useUpdateUser = () => {
         });
         toast.success("Game added to wishlist");
       }
+      setLoading(false);
     },
     [user, getIsInWishList, userInfo]
   );
@@ -206,16 +214,18 @@ export const useUpdateUser = () => {
   const onWishlistDelete = useCallback(
     async (id: number) => {
       if (user) {
+        setLoading(true);
         const newWishlist = userInfo.wishlist.filter((item) => item.id !== id);
         await updateUser(user.uid, {
           ...userInfo,
           wishlist: newWishlist,
         });
-        setUserInfo({
+        await setUserInfo({
           ...userInfo,
           wishlist: newWishlist,
         });
         toast.info("Game deleted from wishlist");
+        setLoading(false);
       }
     },
     [user, userInfo]
@@ -224,6 +234,7 @@ export const useUpdateUser = () => {
   const onAddCartItem = useCallback(
     async (game: User["cart"][0]) => {
       if (user) {
+        setLoading(true);
         if (userInfo.cart.find((item) => item.id === game.id)) {
           toast.error("Game already in cart");
           return;
@@ -238,6 +249,7 @@ export const useUpdateUser = () => {
           cart: newCart,
         });
         toast.success("Game added to cart");
+        setLoading(false);
       }
     },
     [user, userInfo]
@@ -251,6 +263,7 @@ export const useUpdateUser = () => {
     onWishlistAdd,
     getIsInWishList,
     onWishlistDelete,
+    getWishlist,
   };
 };
 export default Cart;
