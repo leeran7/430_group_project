@@ -96,7 +96,8 @@ const Home: NextPage<Props> = ({ game }) => {
                     await onWishlistDelete(game.id);
                   } else {
                     await onWishlistAdd({
-                      ...pick(game, ["id", "name", "background_image"]),
+                      ...game,
+                      price,
                     });
                   }
                 }}
