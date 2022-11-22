@@ -33,7 +33,7 @@ const Home: NextPage = () => {
     <div className="flex flex-col">
       <PageButtons pageOneOrNoQuery={pageOneOrNoQuery} />
       {pageOneOrNoQuery ? (
-        <div className="flex flex-col gap-y-16">
+        <div className="flex flex-col gap-y-4">
           <GameContainer label="Popular Games">
             {popularGames.length > 0
               ? popularGames?.map((game) => (
