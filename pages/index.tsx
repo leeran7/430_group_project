@@ -33,7 +33,7 @@ const Home: NextPage = () => {
     <div className="flex flex-col">
       <PageButtons pageOneOrNoQuery={pageOneOrNoQuery} />
       {pageOneOrNoQuery ? (
-        <div className="flex flex-col gap-y-4">
+        <div className="flex flex-col">
           <GameContainer label="Popular Games">
             {popularGames.length > 0
               ? popularGames?.map((game) => (
@@ -103,10 +103,12 @@ export const GameCard: React.FC<{
                 muted
                 autoPlay
                 src={trailer}
+                is="video"
                 className="h-52 sm:h-40"
               />
             ) : (
               <img
+                loading="eager"
                 src={game.background_image}
                 alt={game.name}
                 className="h-52 sm:h-40"
