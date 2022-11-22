@@ -1,9 +1,8 @@
 import type { NextPage } from "next";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, PropsWithChildren } from "react";
 import { RawgApiClient } from "../components/rawgApiClient";
 import { Game, User } from "../types";
 import { useUser } from "../components/firebase";
-import { pick } from "lodash";
 import { useRouter } from "next/router";
 import { Button } from "../components/PageButton";
 import Link from "next/link";
@@ -12,10 +11,11 @@ import { CgSpinner } from "react-icons/cg";
 import { useUpdateUser } from "./cart";
 import { FaCartPlus } from "react-icons/fa";
 import clsx from "clsx";
+import pick from "lodash/pick";
 
 const Home: NextPage = () => {
   const [user] = useUser();
-  const { games, loading, query } = useGetGames();
+  const { games, popularGames, recentGames, loading, query } = useGetGames();
 
   if (loading) {
     return (
@@ -25,28 +25,53 @@ const Home: NextPage = () => {
       </div>
     );
   }
+  const pageOneOrNoQuery = query.page === "1" || !query.page;
+
   return (
     <div className="flex flex-col">
       <div className="flex gap-x-10 items-center justify-center text-center py-10 w-full">
         <Button label="Previous" />
         <p>Page {query.page ?? 1}</p>
-        <Button isNext label="Next Page" />
+        <Button
+          isNext
+          label={pageOneOrNoQuery ? "All Listings" : "Next Page"}
+        />
       </div>
-      <div className="pb-16 pt-10 px-4 sm:pb-24 sm:px-6 w-full lg:px-32">
-        <h1 className="sr-only">Products</h1>
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8">
+
+      {pageOneOrNoQuery ? (
+        <>
+          <GameContainer label="Popular Games">
+            {popularGames.length > 0
+              ? popularGames?.map((game) => (
+                  <GameCard key={game.id} game={game} userExists={!!user} />
+                ))
+              : null}
+          </GameContainer>
+          <GameContainer label="Recent Games">
+            {recentGames.length > 0
+              ? recentGames?.map((game) => (
+                  <GameCard key={game.id} game={game} userExists={!!user} />
+                ))
+              : null}
+          </GameContainer>
+        </>
+      ) : (
+        <GameContainer label="All Games">
           {games.length > 0
             ? games?.map((game) => (
                 <GameCard key={game.id} game={game} userExists={!!user} />
               ))
             : null}
-        </div>
-      </div>
+        </GameContainer>
+      )}
 
       <div className="flex gap-x-10 items-center justify-center text-center py-10">
         <Button label="Previous" />
         <p>Page {query.page ?? 1}</p>
-        <Button isNext label="Next Page" />
+        <Button
+          isNext
+          label={pageOneOrNoQuery ? "All Listings" : "Next Page"}
+        />
       </div>
     </div>
   );
@@ -57,6 +82,7 @@ export const GameCard: React.FC<{
   userExists: boolean;
 }> = ({ game, userExists }) => {
   const [trailer, setTrailer] = useState<undefined | string>(undefined);
+  const [searched, setSearched] = useState(false);
   const [hovering, setHovering] = useState(false);
   const { getIsInWishList, onWishlistAdd, onAddCartItem, onWishlistDelete } =
     useUpdateUser();
@@ -67,7 +93,7 @@ export const GameCard: React.FC<{
       className="relative flex flex-col z-30 shadow-md rounded-lg focus:shadow-md hover:md:shadow-2xl shadow-gray-300 hover:sm:scale-110 transition-all ease-in-out"
       onMouseOver={async () => {
         setHovering(true);
-        if (!trailer) {
+        if (!trailer && !searched) {
           const rawgApiClient = new RawgApiClient();
           const trailer = await rawgApiClient.getTrailer(game.slug);
           if (trailer.results[0]) {
@@ -75,7 +101,7 @@ export const GameCard: React.FC<{
               setTrailer(trailer.results[0].data.max);
             }
           } else {
-            setTrailer(undefined);
+            setSearched(true);
           }
         }
       }}
@@ -152,8 +178,22 @@ export const GameCard: React.FC<{
   );
 };
 
+const GameContainer: React.FC<PropsWithChildren<{ label: string }>> = ({
+  children,
+  label,
+}) => (
+  <div className="p-4 sm:pb-16 sm:px-6 w-full lg:px-32">
+    <h1 className="text-2xl font-semibold text-gray-700 mb-1">{label}</h1>
+    <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8">
+      {children}
+    </div>
+  </div>
+);
+
 const useGetGames = () => {
   const [games, setGames] = useState<Props["games"]>([]);
+  const [popularGames, setPopularGames] = useState<Props["games"]>([]);
+  const [recentGames, setRecentGames] = useState<Props["games"]>([]);
   const [loading, setLoading] = useState(true);
 
   const { query } = useRouter();
@@ -164,34 +204,69 @@ const useGetGames = () => {
     const fetchData = async () => {
       const rawgApiClient = new RawgApiClient();
       let games: Game[] = [];
+      let popularGames: Game[] = [];
+      let recentGames: Game[] = [];
+
+      setLoading(true);
 
       if (query.search) {
         const search = query.search.toString();
         games = await rawgApiClient.searchGames(search, page);
       } else {
-        games = await rawgApiClient.getGames(page);
-      }
+        if (page === "1") {
+          popularGames = await rawgApiClient.getPopularGames();
+          recentGames = await rawgApiClient.getRecentGames();
+          const mappedPopGames =
+            popularGames.map((game) =>
+              pick(game, [
+                "id",
+                "name",
+                "platforms",
+                "rating",
+                "released",
+                "background_image",
+                "slug",
+              ])
+            ) ?? [];
 
-      const mappedGames =
-        games.map((game) =>
-          pick(game, [
-            "id",
-            "name",
-            "platforms",
-            "rating",
-            "released",
-            "background_image",
-            "slug",
-          ])
-        ) ?? [];
-      setGames(mappedGames);
+          const mappedRecGames =
+            recentGames.map((game) =>
+              pick(game, [
+                "id",
+                "name",
+                "platforms",
+                "rating",
+                "released",
+                "background_image",
+                "slug",
+              ])
+            ) ?? [];
+          setPopularGames(mappedPopGames);
+          setRecentGames(mappedRecGames);
+        } else {
+          games = await rawgApiClient.getGames(page);
+        }
+        const mappedGames =
+          games.map((game) =>
+            pick(game, [
+              "id",
+              "name",
+              "platforms",
+              "rating",
+              "released",
+              "background_image",
+              "slug",
+            ])
+          ) ?? [];
+        setGames(mappedGames);
+      }
       setLoading(false);
     };
 
     fetchData();
   }, [query.page, query.search, page]);
 
-  return { games, loading, query };
+  return { games, popularGames, recentGames, loading, query, page };
 };
 
 export type Props = {
