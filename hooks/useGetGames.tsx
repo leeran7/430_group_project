@@ -24,9 +24,11 @@ export const useGetGames = () => {
 
       setLoading(true);
 
-      if (query.search) {
+      if (!!query.search) {
         const search = query.search.toString();
         games = await rawgApiClient.searchGames(search, page);
+        const mappedGames = games.map((game) => mapToProps(game)) ?? [];
+        setGames(mappedGames);
       } else {
         if (page === "1") {
           popularGames = await rawgApiClient.getPopularGames();
@@ -40,10 +42,10 @@ export const useGetGames = () => {
           setRecentGames(mappedRecGames);
         } else {
           games = await rawgApiClient.getGames(page);
+          const mappedGames = games.map((game) => mapToProps(game)) ?? [];
+          setGames(mappedGames);
         }
       }
-      const mappedGames = games.map((game) => mapToProps(game)) ?? [];
-      setGames(mappedGames);
       setLoading(false);
     };
 
