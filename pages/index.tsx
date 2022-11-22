@@ -1,45 +1,39 @@
 import type { NextPage } from "next";
-import { useState, useEffect, PropsWithChildren } from "react";
-import { RawgApiClient } from "../components/rawgApiClient";
+import { PropsWithChildren, useState } from "react";
 import { Game, User } from "../types";
-import { useUser } from "../components/firebase";
-import { useRouter } from "next/router";
-import { Button } from "../components/PageButton";
-import Link from "next/link";
 import { getPricing } from "../components/lib";
+import { RawgApiClient } from "../components/rawgApiClient";
+import { useUser } from "../components/firebase";
 import { CgSpinner } from "react-icons/cg";
-import { useUpdateUser } from "./cart";
-import { FaCartPlus } from "react-icons/fa";
-import clsx from "clsx";
+import { useGetGames } from "../hooks/useGetGames";
+import { useUpdateUser } from "../hooks/useUpdateUser";
 import pick from "lodash/pick";
+import Link from "next/link";
+import { FaCartPlus } from "react-icons/fa";
+import { useRouter } from "next/router";
+import clsx from "clsx";
+import { Button } from "../components/PageButton";
 
 const Home: NextPage = () => {
   const [user] = useUser();
   const { games, popularGames, recentGames, loading, query } = useGetGames();
-
+  const pageOneOrNoQuery = query.page === "1" || !query.page;
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-bold">Loading...</h1>
-        <CgSpinner className="animate-spin" size="98px" />
+      <div className="flex flex-col">
+        <PageButtons pageOneOrNoQuery={pageOneOrNoQuery} />
+        <div className="flex flex-col items-center justify-between flex-grow">
+          <CgSpinner className="animate-spin" size="98px" />
+        </div>
       </div>
     );
   }
-  const pageOneOrNoQuery = query.page === "1" || !query.page;
 
   return (
     <div className="flex flex-col">
-      <div className="flex gap-x-10 items-center justify-center text-center py-10 w-full">
-        <Button label="Previous" />
-        <p>Page {query.page ?? 1}</p>
-        <Button
-          isNext
-          label={pageOneOrNoQuery ? "All Listings" : "Next Page"}
-        />
-      </div>
-
+      <PageButtons pageOneOrNoQuery={pageOneOrNoQuery} />
       {pageOneOrNoQuery ? (
-        <>
+        <div className="flex flex-col gap-y-16">
           <GameContainer label="Popular Games">
             {popularGames.length > 0
               ? popularGames?.map((game) => (
@@ -54,7 +48,7 @@ const Home: NextPage = () => {
                 ))
               : null}
           </GameContainer>
-        </>
+        </div>
       ) : (
         <GameContainer label="All Games">
           {games.length > 0
@@ -65,14 +59,7 @@ const Home: NextPage = () => {
         </GameContainer>
       )}
 
-      <div className="flex gap-x-10 items-center justify-center text-center py-10">
-        <Button label="Previous" />
-        <p>Page {query.page ?? 1}</p>
-        <Button
-          isNext
-          label={pageOneOrNoQuery ? "All Listings" : "Next Page"}
-        />
-      </div>
+      <PageButtons pageOneOrNoQuery={pageOneOrNoQuery} />
     </div>
   );
 };
@@ -178,96 +165,41 @@ export const GameCard: React.FC<{
   );
 };
 
+const PageButtons: React.FC<{ pageOneOrNoQuery: boolean }> = ({
+  pageOneOrNoQuery,
+}) => {
+  const { query } = useRouter();
+  return (
+    <div
+      className={clsx(
+        "flex gap-x-10 items-center justify-center text-center py-10 w-full",
+        query.page === "2" && "pr-14"
+      )}
+    >
+      <Button label={query.page === "2" ? "Popular / Recent" : "Previous"} />
+      <p className="text-2xl font-bold tracking-wider">
+        {pageOneOrNoQuery
+          ? "Popular / Recent"
+          : `Page ${Number(query?.page?.toString()) - 1 ?? 1}`}
+      </p>
+      <Button isNext label={pageOneOrNoQuery ? "All Listings" : "Next Page"} />
+    </div>
+  );
+};
+
 const GameContainer: React.FC<PropsWithChildren<{ label: string }>> = ({
   children,
   label,
 }) => (
   <div className="p-4 sm:pb-16 sm:px-6 w-full lg:px-32">
-    <h1 className="text-2xl font-semibold text-gray-700 mb-1">{label}</h1>
+    <h1 className="text-2xl font-semibold tracking-wider text-gray-700 mb-3">
+      {label}
+    </h1>
     <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8">
       {children}
     </div>
   </div>
 );
-
-const useGetGames = () => {
-  const [games, setGames] = useState<Props["games"]>([]);
-  const [popularGames, setPopularGames] = useState<Props["games"]>([]);
-  const [recentGames, setRecentGames] = useState<Props["games"]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const { query } = useRouter();
-
-  const page = query.page?.toString() ?? "1";
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const rawgApiClient = new RawgApiClient();
-      let games: Game[] = [];
-      let popularGames: Game[] = [];
-      let recentGames: Game[] = [];
-
-      setLoading(true);
-
-      if (query.search) {
-        const search = query.search.toString();
-        games = await rawgApiClient.searchGames(search, page);
-      } else {
-        if (page === "1") {
-          popularGames = await rawgApiClient.getPopularGames();
-          recentGames = await rawgApiClient.getRecentGames();
-          const mappedPopGames =
-            popularGames.map((game) =>
-              pick(game, [
-                "id",
-                "name",
-                "platforms",
-                "rating",
-                "released",
-                "background_image",
-                "slug",
-              ])
-            ) ?? [];
-
-          const mappedRecGames =
-            recentGames.map((game) =>
-              pick(game, [
-                "id",
-                "name",
-                "platforms",
-                "rating",
-                "released",
-                "background_image",
-                "slug",
-              ])
-            ) ?? [];
-          setPopularGames(mappedPopGames);
-          setRecentGames(mappedRecGames);
-        } else {
-          games = await rawgApiClient.getGames(page);
-        }
-        const mappedGames =
-          games.map((game) =>
-            pick(game, [
-              "id",
-              "name",
-              "platforms",
-              "rating",
-              "released",
-              "background_image",
-              "slug",
-            ])
-          ) ?? [];
-        setGames(mappedGames);
-      }
-      setLoading(false);
-    };
-
-    fetchData();
-  }, [query.page, query.search, page]);
-
-  return { games, popularGames, recentGames, loading, query, page };
-};
 
 export type Props = {
   games: Pick<

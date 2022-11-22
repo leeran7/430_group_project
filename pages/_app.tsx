@@ -7,6 +7,7 @@ import { logout, useUser } from "../components/firebase";
 import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import clsx from "clsx";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -37,15 +38,15 @@ const NavBar = () => {
   const { pathname } = useRouter();
   const navigation = [
     { name: "Home", href: "/", show: true },
-    { name: "About", href: "/about", show: true },
+    // { name: "About", href: "/about", show: true },
     { name: "Wishlist", href: "/wishlist", show: !!user },
     { name: "Cart", href: "/cart", show: !!user },
   ];
 
   return (
     <header className="bg-[#0E3276]">
-      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
-        <div className="flex w-full items-center justify-between border-b border-[#0E3276]-500 lg:border-none">
+      <nav className="mx-auto max-w-7xl px-4" aria-label="Top">
+        <div className="flex w-full items-center justify-between border-b border-[#0E3276]-500 lg:border-none tracking-wider">
           <div className="flex items-center">
             <Link href="/">
               <a>
@@ -53,7 +54,7 @@ const NavBar = () => {
                 <img className="h-16 sm:h-24 w-auto" src="/logo.png" alt="" />
               </a>
             </Link>
-            <div className="ml-10 hidden space-x-8 lg:block">
+            <div className="ml-10 hidden space-x-6 lg:block">
               {navigation.map((link) => {
                 if (!link.show) return null;
                 return (
@@ -69,7 +70,7 @@ const NavBar = () => {
 
           {pathname === "/" && (
             <div className="flex items-center justify-center text-center lg:mr-24 flex-grow">
-              <div className="sm:mr-12 lg:mr-32">
+              <div className={clsx("sm:mr-12", user ? "lg:mr-48" : "")}>
                 <SearchBar />
               </div>
             </div>
@@ -118,7 +119,7 @@ const SearchBar = () => {
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-          await push({ pathname, query: { page: "1", search } });
+          await push({ pathname, query: { page: "2", search } });
           setSearch("");
         }}
         className="flex relative w-full"
@@ -151,6 +152,6 @@ const SearchBar = () => {
 };
 
 const AuthButtonStyles =
-  "inline-block rounded-full border border-transparent bg-color1 py-2 px-4 text-lg font-medium transition-colors ease-in-out text-white hover:bg-opacity-75";
+  "inline-block tracking-wider rounded-full border border-transparent bg-color1 py-2 px-4 text-lg font-medium transition-colors ease-in-out text-white hover:bg-opacity-75";
 
 export default MyApp;
