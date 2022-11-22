@@ -118,7 +118,7 @@ const SearchBar = () => {
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-          await push({ pathname, query: { page: "1", search } });
+          await push({ pathname, query: { page: "2", search } });
           setSearch("");
         }}
         className="flex relative w-full"

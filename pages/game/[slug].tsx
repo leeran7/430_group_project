@@ -9,7 +9,7 @@ import { Carousel } from "react-responsive-carousel";
 import { getPricing, getSymbols } from "../../components/lib";
 import { CgSpinner } from "react-icons/cg";
 import { useUser } from "../../components/firebase";
-import { useUpdateUser } from "../cart";
+import { useUpdateUser } from "../../hooks/useUpdateUser";
 import { pick } from "lodash";
 import clsx from "clsx";
 

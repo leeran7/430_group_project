@@ -1,7 +1,7 @@
 import { CgSpinner } from "react-icons/cg";
 import { useUser } from "../components/firebase";
-import { useUpdateUser } from "./cart";
-import { GameCard } from ".";
+import { useUpdateUser } from "../hooks/useUpdateUser";
+import { GameCard } from "../components/GameCard";
 
 const Wishlist = () => {
   const [user] = useUser();

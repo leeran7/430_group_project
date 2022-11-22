@@ -8,7 +8,7 @@ import { Button } from "../components/PageButton";
 import Link from "next/link";
 import { getPricing } from "../components/lib";
 import { CgSpinner } from "react-icons/cg";
-import { useUpdateUser } from "./cart";
+import { useUpdateUser } from "../hooks/useUpdateUser";
 import { FaCartPlus } from "react-icons/fa";
 import clsx from "clsx";
 import pick from "lodash/pick";
