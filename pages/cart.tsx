@@ -7,7 +7,7 @@ import type { User } from "../types";
 import { toast } from "react-toastify";
 
 const Cart: NextPage = () => {
-  const { user, loading, onDelete } = useUserCart();
+  const { user, loading, onDeleteCartItem } = useUpdateUser();
   const total = useGetTotal(user.cart);
   if (loading || !user.cart) {
     return (
@@ -64,7 +64,7 @@ const Cart: NextPage = () => {
 
                   <button
                     className="text-left font-semibold hover:text-red-500 text-gray-500 text-xs"
-                    onClick={async () => onDelete(item.id)}
+                    onClick={async () => onDeleteCartItem(item.id)}
                   >
                     Remove
                   </button>
@@ -139,7 +139,7 @@ export const useGetTotal = (cart: User["cart"] | undefined) => {
   return total;
 };
 
-export const useUserCart = () => {
+export const useUpdateUser = () => {
   const [loading, setLoading] = useState(false);
   const [user] = useUser();
   const [userInfo, setUserInfo] = useState<User>({} as User);
@@ -156,7 +156,7 @@ export const useUserCart = () => {
     getUser();
   }, [user]);
 
-  const onDelete = useCallback(
+  const onDeleteCartItem = useCallback(
     async (id: number) => {
       if (user) {
         const newCart = userInfo.cart.filter((item) => item.id !== id);
@@ -173,9 +173,68 @@ export const useUserCart = () => {
     },
     [user, userInfo]
   );
-  const onAdd = useCallback(
+
+  const getWishlist = useCallback(() => {
+    if (user) {
+      return userInfo.wishlist;
+    }
+  }, [user, userInfo]);
+
+  const getIsInWishList = useCallback(
+    (id: number) => {
+      return !!userInfo?.wishlist?.find((item) => item.id === id);
+    },
+    [userInfo?.wishlist]
+  );
+
+  const onWishlistAdd = useCallback(
+    async (game: User["wishlist"][0]) => {
+      setLoading(true);
+      if (user) {
+        if (getIsInWishList(game.id)) {
+          toast.error("Game already in wishlist");
+          return;
+        }
+        const newWishlist = [...userInfo.wishlist, game];
+        await updateUser(user.uid, {
+          ...userInfo,
+          wishlist: newWishlist,
+        });
+        setUserInfo({
+          ...userInfo,
+          wishlist: newWishlist,
+        });
+        toast.success("Game added to wishlist");
+      }
+      setLoading(false);
+    },
+    [user, getIsInWishList, userInfo]
+  );
+
+  const onWishlistDelete = useCallback(
+    async (id: number) => {
+      if (user) {
+        setLoading(true);
+        const newWishlist = userInfo.wishlist.filter((item) => item.id !== id);
+        await updateUser(user.uid, {
+          ...userInfo,
+          wishlist: newWishlist,
+        });
+        await setUserInfo({
+          ...userInfo,
+          wishlist: newWishlist,
+        });
+        toast.info("Game deleted from wishlist");
+        setLoading(false);
+      }
+    },
+    [user, userInfo]
+  );
+
+  const onAddCartItem = useCallback(
     async (game: User["cart"][0]) => {
       if (user) {
+        setLoading(true);
         if (userInfo.cart.find((item) => item.id === game.id)) {
           toast.error("Game already in cart");
           return;
@@ -190,11 +249,21 @@ export const useUserCart = () => {
           cart: newCart,
         });
         toast.success("Game added to cart");
+        setLoading(false);
       }
     },
     [user, userInfo]
   );
 
-  return { user: userInfo, loading, onDelete, onAdd };
+  return {
+    user: userInfo,
+    loading,
+    onDeleteCartItem,
+    onAddCartItem,
+    onWishlistAdd,
+    getIsInWishList,
+    onWishlistDelete,
+    getWishlist,
+  };
 };
 export default Cart;

@@ -16,17 +16,26 @@ export class RawgApiClient {
 
   async getGames(page: string) {
     const actualPage = (Number(page) - 1).toString();
-    const { results } = await this.get("games", `&page=${actualPage}&page_size=20`);
+    const { results } = await this.get(
+      "games",
+      `&page=${actualPage}&page_size=20`
+    );
     return results as Game[];
   }
 
-  async getPopularGames(page: string) {
-    const { results } = await this.get("games", `&ordering=-rating&page=${page}&page_size=12`);
+  async getPopularGames() {
+    const { results } = await this.get(
+      "games",
+      `&metacritic=93,100&page=2&page_size=10`
+    );
     return results as Game[];
   }
 
-  async getRecentGames(page: string) {
-    const { results } = await this.get("games", `&dates=2022-01-01,2022-12-31&page=${page}&page_size=8`);
+  async getRecentGames() {
+    const { results } = await this.get(
+      "games",
+      `&dates=2022-01-01,2022-12-31&page=1&page_size=10`
+    );
     return results as Game[];
   }
 
