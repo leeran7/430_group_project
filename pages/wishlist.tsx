@@ -1,7 +1,7 @@
 import { CgSpinner } from "react-icons/cg";
 import { useUser } from "../components/firebase";
 import { useUpdateUser } from "../hooks/useUpdateUser";
-import { GameCard } from ".";
+import { GameCard, GameContainer } from ".";
 
 const Wishlist = () => {
   const [user] = useUser();
@@ -25,18 +25,15 @@ const Wishlist = () => {
   }
 
   return (
-    <div className="pb-16 pt-10 px-4 sm:pb-24 sm:px-6 w-full lg:px-32">
-      <h1 className="sr-only">Products</h1>
-      <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8">
-        {wishlist?.length > 0 ? (
-          wishlist?.map((game) => (
-            <GameCard key={game.id} game={game} userExists={!!user} />
-          ))
-        ) : (
-          <p>No Games added yet!</p>
-        )}
-      </div>
-    </div>
+    <GameContainer label="Wishlist" className="mt-[120px]">
+      {wishlist?.length > 0 ? (
+        wishlist?.map((game) => (
+          <GameCard key={game.id} game={game} userExists={!!user} />
+        ))
+      ) : (
+        <p>No Games added yet!</p>
+      )}
+    </GameContainer>
   );
 };
 
