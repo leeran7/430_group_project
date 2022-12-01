@@ -21,8 +21,7 @@
     "jsx": "preserve",
     "noEmit": false,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    
+    "noUnusedParameters": true
   },
   "include": [
     "next-env.d.ts",

@@ -1,4 +1,5 @@
 import { Game } from "../types";
+
 export class RawgApiClient {
   private get = async (url: string, addedQuery?: string) => {
     const fullUrl = `https://api.rawg.io/api/${url}?key=${
