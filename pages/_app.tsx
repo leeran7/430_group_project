@@ -117,19 +117,6 @@ const NavBar = () => {
             )}
           </div>
         </div>
-
-        <div className="flex flex-wrap justify-center space-x-6 py-4 lg:hidden">
-          {navigation.map((link) => {
-            if (!link.show) return null;
-            return (
-              <Link key={link.name} href={link.href}>
-                <a className="text-base font-medium text-white hover:text-[#0E3276]-50">
-                  {link.name}
-                </a>
-              </Link>
-            );
-          })}
-        </div>
       </nav>
     </header>
   );
