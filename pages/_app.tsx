@@ -8,6 +8,9 @@ import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import clsx from "clsx";
+import { CgProfile } from "react-icons/cg";
+import { Menu } from "@headlessui/react";
+import { BsCheck } from "react-icons/bs";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -37,8 +40,7 @@ const NavBar = () => {
   const [user] = useUser();
   const { pathname } = useRouter();
   const navigation = [
-    { name: "Home", href: "/", show: true },
-    // { name: "About", href: "/about", show: true },
+    { name: "Your Games", href: "/account", show: !!user },
     { name: "Wishlist", href: "/wishlist", show: !!user },
     { name: "Cart", href: "/cart", show: !!user },
   ];
@@ -54,29 +56,51 @@ const NavBar = () => {
                 <img className="h-16 sm:h-24 w-auto" src="/logo.png" alt="" />
               </a>
             </Link>
-            <div className="ml-10 hidden space-x-6 lg:block">
-              {navigation.map((link) => {
-                if (!link.show) return null;
-                return (
-                  <Link key={link.name} href={link.href}>
-                    <a className="text-lg font-medium text-white hover:underline transition-all ease-in-out duration-100 hover:text-[#0E3276]-50">
-                      {link.name}
-                    </a>
-                  </Link>
-                );
-              })}
-            </div>
           </div>
 
           {pathname === "/" && (
-            <div className="flex items-center justify-center text-center lg:mr-24 flex-grow">
-              <div className={clsx("sm:mr-12", user ? "lg:mr-48" : "")}>
-                <SearchBar />
-              </div>
+            <div
+              className={clsx(
+                "flex items-center justify-center text-center flex-grow",
+                user ? "ml-[22px]" : "mr-20"
+              )}
+            >
+              <SearchBar />
             </div>
           )}
 
-          <div className="ml-10 space-x-4">
+          <div className="flex flex-row items-center gap-x-8 relative">
+            {user && (
+              <Menu>
+                <Menu.Button className={clsx(AuthButtonStyles)}>
+                  <CgProfile className="text-white text-2xl" />
+                  <Menu.Items className="absolute flex flex-col z-10 mt-5 w-full bg-white border border-gray-200 rounded-md shadow-lg outline-none -translate-x-3">
+                    {navigation.map((link) => {
+                      if (!link.show) return null;
+                      return (
+                        <Menu.Item key={link.href}>
+                          <Link href={link.href}>
+                            <a
+                              className={clsx(
+                                pathname === link.href
+                                  ? "bg-color1 text-white"
+                                  : "text-gray-900 hover:bg-gray-200",
+                                "flex items-center justify-center relative p-4 text-sm font-medium rounded"
+                              )}
+                            >
+                              {link.name}{" "}
+                              {pathname === link.href && (
+                                <BsCheck className="absolute right-5" />
+                              )}
+                            </a>
+                          </Link>
+                        </Menu.Item>
+                      );
+                    })}
+                  </Menu.Items>
+                </Menu.Button>
+              </Menu>
+            )}
             {user ? (
               <button
                 onClick={async () => {
@@ -92,18 +116,6 @@ const NavBar = () => {
               </Link>
             )}
           </div>
-        </div>
-        <div className="flex flex-wrap justify-center space-x-6 py-4 lg:hidden">
-          {navigation.map((link) => {
-            if (!link.show) return null;
-            return (
-              <Link key={link.name} href={link.href}>
-                <a className="text-base font-medium text-white hover:text-[#0E3276]-50">
-                  {link.name}
-                </a>
-              </Link>
-            );
-          })}
         </div>
       </nav>
     </header>
@@ -151,7 +163,7 @@ const SearchBar = () => {
   );
 };
 
-const AuthButtonStyles =
-  "inline-block tracking-wider rounded-full border border-transparent bg-color1 py-2 px-4 text-lg font-medium transition-colors ease-in-out text-white hover:bg-opacity-75";
+export const AuthButtonStyles =
+  "inline-block tracking-wider rounded-full border border-transparent bg-color1 py-2 px-4 font-medium transition-colors ease-in-out text-white hover:bg-opacity-75";
 
 export default MyApp;

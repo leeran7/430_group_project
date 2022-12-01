@@ -21,6 +21,8 @@ const Home: NextPage<Props> = ({ game }) => {
     onWishlistDelete,
     onWishlistAdd,
     getIsInWishList,
+    getIsOwned,
+    getIsInCart,
   } = useUpdateUser();
   const { isFallback } = useRouter();
 
@@ -33,6 +35,8 @@ const Home: NextPage<Props> = ({ game }) => {
     );
   }
   const isInWishList = getIsInWishList(game.id);
+  const isOwned = getIsOwned(game.id);
+  const isInCart = getIsInCart(game.id);
   const price = getPricing(game.released, game.rating);
   return (
     <div className="relative">
@@ -88,7 +92,7 @@ const Home: NextPage<Props> = ({ game }) => {
                 .map(getSymbols)}
             </span>
           </div>
-          {user && (
+          {user && !isOwned && (
             <div className="flex justify-end">
               <button
                 onClick={async () => {
@@ -123,11 +127,23 @@ const Home: NextPage<Props> = ({ game }) => {
               <button
                 onClick={async () => {
                   await onAddCartItem({
-                    ...pick(game, ["id", "name", "background_image"]),
+                    ...pick(game, [
+                      "id",
+                      "name",
+                      "background_image",
+                      "rating",
+                      "released",
+                      "slug",
+                    ]),
                     price,
                   });
                 }}
-                className="py-2 px-5 z-10 bg-green-400 hover:bg-green-500 rounded"
+                className={clsx(
+                  isInCart
+                    ? "bg-gray-600 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-500",
+                  "py-2 px-5 z-10 rounded"
+                )}
               >
                 Add to Cart
               </button>

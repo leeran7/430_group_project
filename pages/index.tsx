@@ -71,9 +71,20 @@ export const GameCard: React.FC<{
   const [trailer, setTrailer] = useState<undefined | string>(undefined);
   const [searched, setSearched] = useState(false);
   const [hovering, setHovering] = useState(false);
-  const { getIsInWishList, onWishlistAdd, onAddCartItem, onWishlistDelete } =
-    useUpdateUser();
+  const {
+    getIsInWishList,
+    onWishlistAdd,
+    onAddCartItem,
+    onWishlistDelete,
+    getIsInCart,
+    getIsOwned,
+  } = useUpdateUser();
+
   const isInWishList = getIsInWishList(game.id);
+  const isInCart = getIsInCart(game.id);
+  const isOwned = getIsOwned(game.id);
+
+  const { pathname, reload } = useRouter();
   const price = getPricing(game.released, game.rating);
   return (
     <span
@@ -115,14 +126,21 @@ export const GameCard: React.FC<{
               />
             )}
           </div>
+
           <div>
             <h3 className="text-gray-700 font-semibold">{game.name}</h3>
-            <p className="text-gray-800">Price: {price}</p>
-            <p className="flex text-xs gap-x-1">Rating: {game.rating} / 5</p>
+            {pathname !== "/account" && (
+              <>
+                <p className="text-gray-800">Price: {price}</p>
+                <p className="flex text-xs gap-x-1">
+                  Rating: {game.rating} / 5
+                </p>
+              </>
+            )}
           </div>
         </a>
       </Link>
-      {userExists && (
+      {userExists && pathname !== "/account" && !isOwned && (
         <div className="flex justify-end">
           <button
             onClick={async () => {
@@ -134,6 +152,7 @@ export const GameCard: React.FC<{
                   price,
                 });
               }
+              reload();
             }}
             className={clsx(
               "mr-4 self-end mb-2 text-center flex flex-col items-center justify-end py-1 z-10 rounded fill-red-600 border-2 border-transparent hover:border-red-600 px-4",
@@ -157,12 +176,23 @@ export const GameCard: React.FC<{
           <button
             onClick={async () => {
               await onAddCartItem({
-                ...pick(game, ["id", "name", "background_image"]),
+                ...pick(game, [
+                  "id",
+                  "name",
+                  "background_image",
+                  "rating",
+                  "released",
+                  "slug",
+                ]),
                 price,
               });
+              reload();
             }}
             className={clsx(
-              "w-16 mr-2 self-end mb-2 text-center flex flex-col items-center justify-end py-2.5 z-10 bg-green-400 hover:bg-green-500 rounded"
+              isInCart
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-400 hover:bg-green-500",
+              "w-16 mr-2 self-end mb-2 text-center flex flex-col items-center justify-end py-2.5 z-10  rounded"
             )}
           >
             <FaCartPlus />
@@ -195,11 +225,10 @@ const PageButtons: React.FC<{ pageOneOrNoQuery: boolean }> = ({
   );
 };
 
-const GameContainer: React.FC<PropsWithChildren<{ label: string }>> = ({
-  children,
-  label,
-}) => (
-  <div className="p-4 sm:pb-16 sm:px-6 w-full lg:px-32">
+export const GameContainer: React.FC<
+  PropsWithChildren<{ label: string; className?: string }>
+> = ({ children, label, className }) => (
+  <div className={clsx("p-4 sm:pb-16 sm:px-6 w-full lg:px-32", className)}>
     <h1 className="text-2xl font-semibold tracking-wider text-gray-700 mb-3">
       {label}
     </h1>
