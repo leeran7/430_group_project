@@ -25,15 +25,9 @@ export const useUpdateUser = () => {
     async (id: number) => {
       if (user) {
         const newCart = userInfo.cart.filter((item) => item.id !== id);
-        await updateUser(user.uid, {
-          ...userInfo,
-          cart: newCart,
-        });
-        setUserInfo({
-          ...userInfo,
-          cart: newCart,
-        });
-        toast.success("Game deleted from cart");
+        const data = { ...userInfo, cart: newCart };
+        await updateUser(user.uid, data);
+        setUserInfo(data);
       }
     },
     [user, userInfo]
@@ -45,11 +39,31 @@ export const useUpdateUser = () => {
     }
   }, [user, userInfo]);
 
+  const getOwned = useCallback(() => {
+    if (user) {
+      return userInfo.owned;
+    }
+  }, [user, userInfo]);
+
   const getIsInWishList = useCallback(
     (id: number) => {
       return !!userInfo?.wishlist?.find((item) => item.id === id);
     },
     [userInfo?.wishlist]
+  );
+
+  const getIsInCart = useCallback(
+    (id: number) => {
+      return !!userInfo?.cart?.find((item) => item.id === id);
+    },
+    [userInfo?.cart]
+  );
+
+  const getIsOwned = useCallback(
+    (id: number) => {
+      return !!userInfo?.owned?.find((item) => item.id === id);
+    },
+    [userInfo?.owned]
   );
 
   const onWishlistAdd = useCallback(
@@ -61,14 +75,10 @@ export const useUpdateUser = () => {
           return;
         }
         const newWishlist = [...userInfo.wishlist, game];
-        await updateUser(user.uid, {
-          ...userInfo,
-          wishlist: newWishlist,
-        });
-        setUserInfo({
-          ...userInfo,
-          wishlist: newWishlist,
-        });
+        const data = { ...userInfo, wishlist: newWishlist };
+        await updateUser(user.uid, data);
+        setUserInfo(data);
+
         toast.success("Game added to wishlist");
       }
       setLoading(false);
@@ -81,14 +91,10 @@ export const useUpdateUser = () => {
       if (user) {
         setLoading(true);
         const newWishlist = userInfo.wishlist.filter((item) => item.id !== id);
-        await updateUser(user.uid, {
-          ...userInfo,
-          wishlist: newWishlist,
-        });
-        await setUserInfo({
-          ...userInfo,
-          wishlist: newWishlist,
-        });
+        const data = { ...userInfo, wishlist: newWishlist };
+        await updateUser(user.uid, data);
+        await setUserInfo(data);
+
         toast.info("Game deleted from wishlist");
         setLoading(false);
       }
@@ -100,19 +106,19 @@ export const useUpdateUser = () => {
     async (game: User["cart"][0]) => {
       if (user) {
         setLoading(true);
-        if (userInfo.cart.find((item) => item.id === game.id)) {
+        if (userInfo?.cart.find((item) => item.id === game.id)) {
           toast.error("Game already in cart");
           return;
         }
+        if (userInfo?.owned.find((item) => item.id === game.id)) {
+          toast.error("You already own this game");
+          return;
+        }
         const newCart = [...userInfo.cart, game];
-        await updateUser(user.uid, {
-          ...userInfo,
-          cart: newCart,
-        });
-        setUserInfo({
-          ...userInfo,
-          cart: newCart,
-        });
+        const data = { ...userInfo, cart: newCart };
+        await updateUser(user.uid, data);
+        setUserInfo(data);
+
         toast.success("Game added to cart");
         setLoading(false);
       }
@@ -120,14 +126,37 @@ export const useUpdateUser = () => {
     [user, userInfo]
   );
 
+  const onCheckout = useCallback(async () => {
+    if (user) {
+      setLoading(true);
+
+      const owned = [...userInfo.owned, ...userInfo.cart];
+      const wishlist = userInfo.wishlist.filter(
+        (item) => !userInfo.cart.find((cartItem) => cartItem.id === item.id)
+      );
+
+      const data = { ...userInfo, cart: [], owned, wishlist };
+
+      await updateUser(user.uid, data);
+      setUserInfo(data);
+
+      toast.success("Checkout successful");
+      setLoading(false);
+    }
+  }, [user, userInfo]);
+
   return {
     user: userInfo,
     loading,
     onDeleteCartItem,
     onAddCartItem,
+    getIsOwned,
+    getIsInCart,
     onWishlistAdd,
     getIsInWishList,
     onWishlistDelete,
     getWishlist,
+    getOwned,
+    onCheckout,
   };
 };

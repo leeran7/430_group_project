@@ -8,10 +8,18 @@ export type User = {
   country: string;
   emailAddress: string;
   zipcode: number;
-  cart: (Pick<Game, "name" | "id" | "background_image"> & {
+  cart: (Pick<
+    Game,
+    "name" | "id" | "background_image" | "rating" | "released" | "slug"
+  > & {
     price: string;
   })[];
-  owned: string[];
+  owned: (Pick<
+    Game,
+    "name" | "id" | "background_image" | "rating" | "released" | "slug"
+  > & {
+    price: string;
+  })[];
   wishlist: (Pick<
     Game,
     "name" | "id" | "background_image" | "rating" | "released" | "slug"

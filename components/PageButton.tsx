@@ -22,8 +22,10 @@ export const Button: React.FC<{
         }
       }}
       className={clsx(
-        "px-4 py-2 rounded-full text-white font-medium hover:bg-color2 tracking-wider",
-        disabled ? "opacity-50 cursor-not-allowed" : "bg-[#0E3276]"
+        "px-4 py-2 rounded-full text-white font-medium tracking-wider",
+        disabled
+          ? "opacity-50 cursor-not-allowed"
+          : "bg-color1 hover:bg-opacity-75"
       )}
       disabled={disabled}
     >
