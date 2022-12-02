@@ -46,7 +46,7 @@ const NavBar = () => {
   ];
 
   return (
-    <header className="bg-[#0E3276]">
+    <header className="bg-color1">
       <nav className="mx-auto max-w-7xl px-4" aria-label="Top">
         <div className="flex w-full items-center justify-between border-b border-[#0E3276]-500 lg:border-none tracking-wider">
           <div className="flex items-center">
@@ -73,7 +73,7 @@ const NavBar = () => {
             {user && (
               <Menu>
                 <Menu.Button className={clsx(AuthButtonStyles)}>
-                  <CgProfile className="text-white text-2xl" />
+                  <CgProfile className="text-2xl" />
                   <Menu.Items className="absolute flex flex-col z-10 mt-5 w-full bg-white border border-gray-200 rounded-md shadow-lg outline-none -translate-x-3">
                     {navigation.map((link) => {
                       if (!link.show) return null;
@@ -110,11 +110,11 @@ const NavBar = () => {
               >
                 Logout
               </button>
-            ) : (
+            ) : pathname !== "/login" ? (
               <Link href="/login">
                 <a className={AuthButtonStyles}>Login</a>
               </Link>
-            )}
+            ) : null}
           </div>
         </div>
       </nav>
@@ -164,6 +164,6 @@ const SearchBar = () => {
 };
 
 export const AuthButtonStyles =
-  "inline-block tracking-wider rounded-full border border-transparent bg-color1 py-2 px-4 font-medium transition-colors ease-in-out text-white hover:bg-opacity-75";
+  "inline-block tracking-widest rounded-full border border-transparent py-2 px-4 font-medium transition-colors ease-in-out hover:text-white hover:bg-color1 bg-white";
 
 export default MyApp;

@@ -10,8 +10,10 @@ export class RawgApiClient {
       headers: {
         "Content-Type": "application/json",
       },
-    });
-    return res.json();
+    }).catch((err) => console.error(err));
+    if (res && res.ok) {
+      return res.json();
+    }
   };
 
   async getGames(page: string) {
