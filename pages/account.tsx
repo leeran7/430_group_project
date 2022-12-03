@@ -8,18 +8,11 @@ const Account = () => {
   const { getOwned, loading } = useUpdateUser();
   const owned = getOwned();
 
-  if (loading || !user) {
+  if (loading || !user || !owned) {
     return (
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-bold">Loading...</h1>
-        <CgSpinner className="animate-spin" size="98px" />
-      </div>
-    );
-  }
-  if (!owned) {
-    return (
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-bold">No purchased</h1>
+        <h1 className="text-3xl font-bold">Your Games Loading...</h1>
+        <CgSpinner className="animate-spin" size="150px" />
       </div>
     );
   }

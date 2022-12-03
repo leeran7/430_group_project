@@ -22,9 +22,7 @@ const Home: NextPage = () => {
     return (
       <div className="flex flex-col">
         <PageButtons pageOneOrNoQuery={pageOneOrNoQuery} />
-        <div className="flex flex-col items-center justify-between flex-grow">
-          <CgSpinner className="animate-spin" size="98px" />
-        </div>
+        <CgSpinner className="animate-spin m-auto" size="150px" />
       </div>
     );
   }

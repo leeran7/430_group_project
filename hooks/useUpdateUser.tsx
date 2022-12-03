@@ -3,11 +3,13 @@ import { useCallback, useEffect, useState } from "react";
 import { User } from "../types";
 import { getUserById, updateUser } from "../components/firebase";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 export const useUpdateUser = () => {
   const [loading, setLoading] = useState(false);
   const [user] = useUser();
   const [userInfo, setUserInfo] = useState<User>({} as User);
+  const router = useRouter();
 
   useEffect(() => {
     const getUser = async () => {
@@ -19,16 +21,18 @@ export const useUpdateUser = () => {
       setLoading(false);
     };
     getUser();
-  }, [user]);
+  }, [user, router.pathname]);
 
   const onDeleteCartItem = useCallback(
     async (id: number) => {
+      setLoading(true);
       if (user) {
         const newCart = userInfo.cart.filter((item) => item.id !== id);
         const data = { ...userInfo, cart: newCart };
         await updateUser(user.uid, data);
         setUserInfo(data);
       }
+      setLoading(false);
     },
     [user, userInfo]
   );

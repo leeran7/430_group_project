@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 const PageLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-screen">
       <Head>
         <title>Games-R-Us</title>
         <meta name="description" content="Games-R-Us" />

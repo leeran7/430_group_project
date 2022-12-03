@@ -16,7 +16,7 @@ import clsx from "clsx";
 const Home: NextPage<Props> = ({ game }) => {
   const [user] = useUser();
   const {
-    loading: userLoading,
+    loading,
     onAddCartItem,
     onWishlistDelete,
     onWishlistAdd,
@@ -26,11 +26,10 @@ const Home: NextPage<Props> = ({ game }) => {
   } = useUpdateUser();
   const { isFallback } = useRouter();
 
-  if (isFallback || !game || userLoading) {
+  if (isFallback || !game || loading) {
     return (
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-bold">Loading...</h1>
-        <CgSpinner className="animate-spin" size="98px" />
+        <CgSpinner className="animate-spin" size="150px" />
       </div>
     );
   }

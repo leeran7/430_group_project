@@ -8,18 +8,11 @@ const Wishlist = () => {
   const { getWishlist, loading } = useUpdateUser();
   const wishlist = getWishlist();
 
-  if (loading || !user) {
+  if (loading || !user || !wishlist) {
     return (
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-bold">Loading...</h1>
-        <CgSpinner className="animate-spin" size="98px" />
-      </div>
-    );
-  }
-  if (!wishlist) {
-    return (
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-bold">No wishlist</h1>
+        <h1 className="text-3xl font-bold">Wishlist Loading...</h1>
+        <CgSpinner className="animate-spin" size="150px" />
       </div>
     );
   }

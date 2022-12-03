@@ -18,8 +18,8 @@ const Cart: NextPage = () => {
   if (loading || !user.cart) {
     return (
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-bold">Loading...</h1>
-        <CgSpinner className="animate-spin" size="98px" />
+        <h1 className="text-3xl font-bold">Cart Loading...</h1>
+        <CgSpinner className="animate-spin" size="150px" />
       </div>
     );
   }
