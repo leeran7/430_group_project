@@ -14,7 +14,7 @@ import { pick } from "lodash";
 import clsx from "clsx";
 import React, { useState } from "react";
 
-const Home: NextPage<Props> = ({ game }) => {
+const Home: NextPage<Props> = ({ game, trailer }) => {
   const [user] = useUser();
   const {
     loading,
@@ -44,19 +44,47 @@ const Home: NextPage<Props> = ({ game }) => {
   const isOwned = getIsOwned(game.id);
   const isInCart = getIsInCart(game.id);
   const price = getPricing(game.released, game.rating);
+  const imagesAndVideos = [
+    { type: "image", url: game.background_image },
+    { type: "image", url: game.background_image_additional },
+    trailer ? { type: "video", url: trailer } : {},
+  ].filter((i) => !!i.url);
   return (
     <div className="relative px-20 py-10">
       <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-1/2">
-          <Carousel autoPlay className="object-cover mt-3 ml-auto mr-auto">
-            {[game.background_image, game.background_image_additional].map(
-              (i) => (
-                <div key={i}>
-                  <img className="rounded-md" src={i} alt={game.name} />
-                  <p className="legend">{game.name}</p>
+          <Carousel
+            renderThumbs={() =>
+              imagesAndVideos.map((i) => (
+                <div key={i.url}>
+                  {i.type === "image" ? (
+                    <img className="rounded-md" src={i.url} alt={game.name} />
+                  ) : trailer ? (
+                    <video className="rounded-md" muted autoPlay src={i.url} />
+                  ) : null}
                 </div>
-              )
-            )}
+              ))
+            }
+            autoPlay
+            className="object-cover mt-3 ml-auto mr-auto"
+          >
+            {imagesAndVideos.map((i) => (
+              <div key={i.url}>
+                {i.type === "image" ? (
+                  <img className="rounded-md" src={i.url} alt={game.name} />
+                ) : (
+                  trailer && (
+                    <video
+                      className="rounded-md"
+                      controls
+                      muted
+                      autoPlay
+                      src={i.url}
+                    />
+                  )
+                )}
+              </div>
+            ))}
           </Carousel>
         </div>
 
@@ -210,6 +238,7 @@ const Home: NextPage<Props> = ({ game }) => {
 
 export type Props = {
   game: Game;
+  trailer: string | undefined | null;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -229,9 +258,9 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       notFound: true,
     };
   }
-
+  const trailer = await rawgApiClient.getTrailer(game.slug);
   return {
-    props: { game },
+    props: { game, trailer: trailer.results[0]?.data?.max ?? null },
   };
 };
 
