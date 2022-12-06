@@ -1,5 +1,13 @@
-import { FaPlaystation, FaXbox, FaDesktop, FaLinux } from "react-icons/fa";
-
+import {
+  FaPlaystation,
+  FaXbox,
+  FaDesktop,
+  FaLinux,
+  FaAndroid,
+  FaApple,
+} from "react-icons/fa";
+import { RiMacbookLine } from "react-icons/ri";
+import { SiPlaystationvita, SiWiiu, SiNintendoswitch } from "react-icons/si";
 export const getPricing = (releaseDate: string | null, rating: number) => {
   if (!releaseDate || rating === 0) return "$19.99";
 
@@ -19,27 +27,54 @@ export const getPricing = (releaseDate: string | null, rating: number) => {
   }
   return price;
 };
+const include = (p: string, g: string) => {
+  return p.includes(g) ? g : null;
+};
 
-export const getSymbols = (platform: string) => {
-  let symb = null;
-  if (platform.includes("PlayStation")) {
-    symb = <FaPlaystation />;
-  } else if (platform.includes("Xbox")) {
-    symb = <FaXbox />;
-  } else if (platform.includes("PC")) {
-    symb = <FaDesktop />;
-  } else if (platform.includes("Linux")) {
-    symb = <FaLinux />;
-  }
-  const number = platform.match(/\d+/g);
+export const getSymbols = (p: string) => {
   return (
-    <p
-      key={platform}
-      className="flex gap-x-0.5 text-md items-center justify-center"
-    >
-      {symb}
-      <sup>
-        {platform.includes("One") ? 1 : platform.includes("X") ? "X" : number}
+    <p key={p} className="flex gap-x-0.5 text-md items-center justify-center">
+      {include(p, "PlayStation") ? (
+        <FaPlaystation />
+      ) : include(p, "Xbox") ? (
+        <FaXbox />
+      ) : include(p, "PC") ? (
+        <FaDesktop />
+      ) : include(p, "Linux") ? (
+        <FaLinux />
+      ) : include(p, "macOS") ? (
+        <RiMacbookLine />
+      ) : include(p, "Wii U") ? (
+        <SiWiiu />
+      ) : include(p, "Android") ? (
+        <FaAndroid />
+      ) : include(p, "iOS") ? (
+        <FaApple />
+      ) : include(p, "Vita") ? (
+        <SiPlaystationvita />
+      ) : include(p, "Switch") ? (
+        <SiNintendoswitch />
+      ) : (
+        p
+      )}
+      <sup className="text-xs">
+        {include(p, "One")
+          ? "One"
+          : include(p, "S/X")
+          ? "S/X"
+          : include(p, "360")
+          ? "360"
+          : include(p, "1")
+          ? "1"
+          : include(p, "2")
+          ? "2"
+          : include(p, "3")
+          ? "3"
+          : include(p, "4")
+          ? "4"
+          : include(p, "5")
+          ? "5"
+          : null}
       </sup>
     </p>
   );

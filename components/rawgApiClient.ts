@@ -52,9 +52,10 @@ export class RawgApiClient {
   }
 
   async searchGames(query: string, page: string) {
+    const numPage = (Number(page) - 1).toString();
     const { results } = await this.get(
       "games",
-      `&search=${query}&page=${page}&page_size=20`
+      `&search=${query}&metacritic=50,100&page=${numPage}`
     );
     return results as Game[];
   }
