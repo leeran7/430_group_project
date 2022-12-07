@@ -120,7 +120,7 @@ const Home: NextPage<Props> = ({ game, trailer }) => {
                 )}
               </div>
               <button
-                className="text-indigo-600 hover:text-black hover:underline underline-offset-4 transition-all ease-in duration-500"
+                className="text-indigo-600 hover:text-black hover:underline underline-offset-4"
                 onClick={toggleDescription}
               >
                 show {isExpanded ? "less" : "more"}
