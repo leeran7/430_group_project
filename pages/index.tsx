@@ -9,7 +9,8 @@ import { useGetGames } from "../hooks/useGetGames";
 import { useUpdateUser } from "../hooks/useUpdateUser";
 import pick from "lodash/pick";
 import Link from "next/link";
-import { FaCartPlus } from "react-icons/fa";
+import { AiFillStar } from "react-icons/ai";
+import { FaCartPlus, FaStarHalf } from "react-icons/fa";
 import { useRouter } from "next/router";
 import clsx from "clsx";
 import { Button } from "../components/PageButton";
@@ -130,9 +131,19 @@ export const GameCard: React.FC<{
             {pathname !== "/account" && (
               <>
                 <p className="text-gray-800">Price: {price}</p>
-                <p className="flex text-xs gap-x-1">
-                  Rating: {game.rating} / 5
-                </p>
+                {hovering ? (
+                  <p className="flex text-xs gap-x-1">
+                    {new Array(Math.floor(game.rating)).fill(0).map((_, i) => (
+                      <AiFillStar key={i} />
+                    ))}
+                    {(Math.round(game.rating * 2) / 2) % 1 === 0.5 ||
+                    game.rating === 0 ? (
+                      <FaStarHalf className="text-gray-300" />
+                    ) : null}
+                  </p>
+                ) : (
+                  <div className="py-2" />
+                )}
               </>
             )}
           </div>

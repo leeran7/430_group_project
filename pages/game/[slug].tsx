@@ -1,6 +1,6 @@
 import { CarouselWithLabel } from "../../components/CarouselWithLabel";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import { FaReddit } from "react-icons/fa";
+import { FaReddit, FaStarHalf } from "react-icons/fa";
 import { RawgApiClient } from "../../components/rawgApiClient";
 import { Game } from "../../types";
 import { useRouter } from "next/router";
@@ -13,6 +13,7 @@ import { useUpdateUser } from "../../hooks/useUpdateUser";
 import { pick } from "lodash";
 import clsx from "clsx";
 import React, { useState } from "react";
+import { AiFillStar } from "react-icons/ai";
 
 const Home: NextPage<Props> = ({ game, trailer }) => {
   const [user] = useUser();
@@ -108,7 +109,7 @@ const Home: NextPage<Props> = ({ game, trailer }) => {
               <div className="relative">
                 <p
                   className={clsx(
-                    "text-black-700 text-sm md:text-base overflow-hidden text-ellipsis",
+                    "text-black-700 text-xs md:text-base overflow-hidden text-ellipsis",
                     isExpanded ? "h-auto" : "h-24"
                   )}
                 >
@@ -119,7 +120,7 @@ const Home: NextPage<Props> = ({ game, trailer }) => {
                 )}
               </div>
               <button
-                className="hover:text-indigo-600"
+                className="text-indigo-600 hover:text-black hover:underline underline-offset-4 transition-all ease-in duration-500"
                 onClick={toggleDescription}
               >
                 show {isExpanded ? "less" : "more"}
@@ -137,20 +138,29 @@ const Home: NextPage<Props> = ({ game, trailer }) => {
                   </a>
                 )}
               </h2>
-              <p>Released: {game.released}</p>
-
-              {game.rating && <p>Rating: {game.rating}</p>}
+              {game.rating && (
+                <div className="flex text-xl gap-x-1">
+                  {new Array(Math.floor(game.rating)).fill(0).map((_, i) => (
+                    <AiFillStar key={i} />
+                  ))}
+                  {(Math.round(game.rating * 2) / 2) % 1 === 0.5 ||
+                  game.rating === 0 ? (
+                    <FaStarHalf className="text-gray-300" />
+                  ) : null}
+                </div>
+              )}
               <div className="flex gap-x-10">
                 {game.ratings.map((r) => (
                   <div
                     key={r.id}
-                    className="capitalize flex flex-col items-center justify-between"
+                    className="capitalize flex flex-col justify-between"
                   >
                     <p>{r.title}</p> <p>{r.count.toLocaleString()}</p>{" "}
                     <p>{r.percent}%</p>
                   </div>
                 ))}
               </div>
+              <p>Released: {game.released}</p>
               {game.esrb_rating?.name ? (
                 <p>ESRB Rating: {game.esrb_rating.name}</p>
               ) : null}
