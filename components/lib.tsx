@@ -9,23 +9,22 @@ import {
 import { RiMacbookLine } from "react-icons/ri";
 import { SiPlaystationvita, SiWiiu, SiNintendoswitch } from "react-icons/si";
 export const getPricing = (releaseDate: string | null, rating: number) => {
-  if (!releaseDate || rating === 0) return "$19.99";
-
-  let price = null;
+  if (!releaseDate || rating === 0) return "$9.99";
   if (releaseDate.includes("2022")) {
-    price = "$69.99";
+    return "$69.99";
   } else if (rating >= 4.5) {
-    price = "$59.99";
+    return "$59.99";
   } else if (rating >= 4.2) {
-    price = "$49.99";
+    return "$49.99";
   } else if (rating >= 3.7) {
-    price = "$39.99";
+    return "$39.99";
   } else if (rating >= 3.2) {
-    price = "$29.99";
+    return "$29.99";
+  } else if (rating > 2) {
+    return "$19.99";
   } else {
-    price = "$19.99";
+    return "$9.99";
   }
-  return price;
 };
 const include = (p: string, g: string) => {
   return p.includes(g) ? g : null;
