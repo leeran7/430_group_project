@@ -216,10 +216,11 @@ const Home: NextPage<Props> = ({ game, trailer }) => {
                   }}
                   className={clsx(
                     isInCart
-                      ? "bg-gray-600 cursor-not-allowed"
-                      : "bg-green-600 hover:bg-green-500",
-                    "py-2 px-5 z-10 rounded"
+                      ? "bg-gray-600 text-gray-200 cursor-not-allowed"
+                      : "bg-green-500 hover:bg-green-400 text-color1 ",
+                    "py-2 px-5 z-10 rounded font-bold"
                   )}
+                  disabled={isInCart}
                 >
                   Add to Cart
                 </button>

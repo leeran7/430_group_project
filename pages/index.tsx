@@ -87,7 +87,7 @@ export const GameCard: React.FC<{
   const price = getPricing(game.released, game.rating);
   return (
     <span
-      className="relative flex flex-col justify-between hover:z-30 shadow-md rounded-lg bg-white focus:shadow-md hover:sm:scale-125 hover:shadow-2xl shadow-gray-300 transition-all ease-out duration-[250]"
+      className="relative flex flex-col justify-between hover:z-30 shadow-md rounded-lg bg-white focus:shadow-md hover:sm:scale-125 hover:shadow-2xl shadow-gray-300 transition-all ease-out duration-[250] border"
       onMouseOver={async () => {
         if (trailer && !playTrailer) {
           setPlayTrailer(true);
@@ -106,8 +106,8 @@ export const GameCard: React.FC<{
       }}
     >
       <Link href={`/game/${game.id}`}>
-        <a className="group flex flex-col gap-y-1 p-2">
-          <div className="flex flex-col overflow-hidden rounded-lg bg-gray-200">
+        <a className="group flex flex-col gap-y-1">
+          <div className="flex flex-col overflow-hidden rounded-t-lg bg-gray-200">
             {trailer && playTrailer ? (
               <video
                 controls
@@ -127,7 +127,7 @@ export const GameCard: React.FC<{
             )}
           </div>
 
-          <div className="flex-grow">
+          <div className="flex-grow px-2">
             <h3 className="text-gray-700 truncate font-semibold">
               {game.name}
             </h3>
