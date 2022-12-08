@@ -141,7 +141,7 @@ export const GameCard: React.FC<{
                   ))}
                   {(Math.round(game.rating * 2) / 2) % 1 === 0.5 ||
                   game.rating === 0 ? (
-                    <FaStarHalf className="text-gray-300" />
+                    <FaStarHalf />
                   ) : null}
                 </p>
               </>
