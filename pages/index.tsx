@@ -127,7 +127,7 @@ export const GameCard: React.FC<{
             )}
           </div>
 
-          <div className="flex-grow px-2">
+          <div className={clsx("flex-grow px-2", !userExists && "pb-2")}>
             <h3 className="text-gray-700 truncate font-semibold">
               {game.name}
             </h3>
