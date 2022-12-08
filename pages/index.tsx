@@ -69,7 +69,7 @@ export const GameCard: React.FC<{
 }> = ({ game, userExists }) => {
   const [trailer, setTrailer] = useState<undefined | string>(undefined);
   const [searched, setSearched] = useState(false);
-  const [hovering, setHovering] = useState(false);
+  const [playTrailer, setPlayTrailer] = useState(false);
   const {
     getIsInWishList,
     onWishlistAdd,
@@ -87,33 +87,34 @@ export const GameCard: React.FC<{
   const price = getPricing(game.released, game.rating);
   return (
     <span
-      className="relative flex flex-col hover:z-30 shadow-md rounded-lg bg-white focus:shadow-md hover:shadow-2xl shadow-gray-300 hover:sm:scale-[1.4] transition-all ease-out duration-[250]"
+      className="relative flex flex-col justify-between hover:z-30 shadow-md rounded-lg bg-white focus:shadow-md hover:sm:scale-125 hover:shadow-2xl shadow-gray-300 transition-all ease-out duration-[250]"
       onMouseOver={async () => {
-        setHovering(true);
-        if (!trailer && !searched) {
+        if (trailer && !playTrailer) {
+          setPlayTrailer(true);
+        } else if (!trailer && !searched) {
           const rawgApiClient = new RawgApiClient();
           const trailer = await rawgApiClient.getTrailer(game.slug);
           if (trailer.results[0]) {
             if (trailer.results[0]?.data?.max) {
               setTrailer(trailer.results[0].data.max);
+              setPlayTrailer(true);
             }
           } else {
             setSearched(true);
           }
         }
       }}
-      onMouseLeave={() => setHovering(false)}
     >
       <Link href={`/game/${game.id}`}>
         <a className="group flex flex-col gap-y-1 p-2">
           <div className="flex flex-col overflow-hidden rounded-lg bg-gray-200">
-            {trailer && hovering ? (
+            {trailer && playTrailer ? (
               <video
                 controls
                 muted
                 autoPlay
                 src={trailer}
-                is="video"
+                onEnded={() => setPlayTrailer(false)}
                 className="h-52 sm:h-40"
               />
             ) : (
@@ -126,24 +127,21 @@ export const GameCard: React.FC<{
             )}
           </div>
 
-          <div>
+          <div className="flex-grow">
             <h3 className="text-gray-700 font-semibold">{game.name}</h3>
             {pathname !== "/account" && (
               <>
                 <p className="text-gray-800">Price: {price}</p>
-                {hovering ? (
-                  <p className="flex text-xs gap-x-1">
-                    {new Array(Math.floor(game.rating)).fill(0).map((_, i) => (
-                      <AiFillStar key={i} />
-                    ))}
-                    {(Math.round(game.rating * 2) / 2) % 1 === 0.5 ||
-                    game.rating === 0 ? (
-                      <FaStarHalf className="text-gray-300" />
-                    ) : null}
-                  </p>
-                ) : (
-                  <div className="py-2" />
-                )}
+
+                <p className="flex text-xs gap-x-1">
+                  {new Array(Math.floor(game.rating)).fill(0).map((_, i) => (
+                    <AiFillStar key={i} />
+                  ))}
+                  {(Math.round(game.rating * 2) / 2) % 1 === 0.5 ||
+                  game.rating === 0 ? (
+                    <FaStarHalf className="text-gray-300" />
+                  ) : null}
+                </p>
               </>
             )}
           </div>

@@ -58,21 +58,11 @@ const NavBar = () => {
             </Link>
           </div>
 
-          {pathname === "/" && (
-            <div
-              className={clsx(
-                "flex items-center justify-center text-center flex-grow",
-                user ? "ml-[22px]" : "mr-20"
-              )}
-            >
-              <SearchBar />
-            </div>
-          )}
-
-          <div className="flex flex-row items-center gap-x-8 relative">
-            {user && (
+          {pathname === "/" && <SearchBar />}
+          {user ? (
+            <div className="flex items-center justify-center gap-x-4 relative">
               <Menu>
-                <Menu.Button className={clsx(AuthButtonStyles)}>
+                <Menu.Button className={AuthButtonStyles}>
                   <CgProfile className="text-2xl" />
                   <Menu.Items className="absolute flex flex-col z-10 mt-5 w-full bg-white border border-gray-200 rounded-md shadow-lg outline-none -translate-x-3">
                     {navigation.map((link) => {
@@ -100,8 +90,6 @@ const NavBar = () => {
                   </Menu.Items>
                 </Menu.Button>
               </Menu>
-            )}
-            {user ? (
               <button
                 onClick={async () => {
                   await logout();
@@ -110,12 +98,12 @@ const NavBar = () => {
               >
                 Logout
               </button>
-            ) : pathname !== "/login" ? (
-              <Link href="/login">
-                <a className={AuthButtonStyles}>Login</a>
-              </Link>
-            ) : null}
-          </div>
+            </div>
+          ) : (
+            <Link href="/login">
+              <a className={AuthButtonStyles}>Login</a>
+            </Link>
+          )}
         </div>
       </nav>
     </header>
@@ -125,9 +113,14 @@ const NavBar = () => {
 const SearchBar = () => {
   const { push, pathname } = useRouter();
   const [search, setSearch] = useState("");
-
+  const [user] = useUser();
   return (
-    <div className="rounded-full bg-white">
+    <div
+      className={clsx(
+        !user && "mr-[5.57rem]",
+        "self-center rounded-full bg-white"
+      )}
+    >
       <form
         onSubmit={async (e) => {
           e.preventDefault();
