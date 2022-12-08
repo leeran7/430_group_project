@@ -14,7 +14,6 @@ import { FaCartPlus, FaStarHalf } from "react-icons/fa";
 import { useRouter } from "next/router";
 import clsx from "clsx";
 import { Button } from "../components/PageButton";
-import { off } from "process";
 
 const Home: NextPage = () => {
   const [user] = useUser();
