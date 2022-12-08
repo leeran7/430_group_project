@@ -117,7 +117,7 @@ const SearchBar = () => {
   return (
     <div
       className={clsx(
-        !user && "mr-[5.57rem]",
+        !user && "mr-[5.43rem]",
         "self-center rounded-full bg-white"
       )}
     >
