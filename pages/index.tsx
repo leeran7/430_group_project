@@ -132,10 +132,11 @@ export const GameCard: React.FC<{
               {game.name}
             </h3>
             {pathname !== "/account" && (
-              <>
-                <p className="text-gray-800">Price: {price}</p>
-
-                <p className="flex text-xs gap-x-1">
+              <div className="flex items-center justify-between">
+                <p className="text-gray-800 text-lg font-semibold mb-1">
+                  {price}
+                </p>
+                <p className="flex gap-x-1 text-xs">
                   {new Array(Math.floor(game.rating)).fill(0).map((_, i) => (
                     <AiFillStar key={i} />
                   ))}
@@ -144,7 +145,7 @@ export const GameCard: React.FC<{
                     <FaStarHalf />
                   ) : null}
                 </p>
-              </>
+              </div>
             )}
           </div>
         </a>
