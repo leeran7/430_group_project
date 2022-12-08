@@ -106,25 +106,23 @@ const Home: NextPage<Props> = ({ game, trailer }) => {
                   game.name
                 )}
               </h1>
-              <div className="relative">
+
+              <div className="flex flex-col">
                 <p
                   className={clsx(
-                    "text-black-700 text-xs md:text-base overflow-hidden text-ellipsis",
-                    isExpanded ? "h-auto" : "h-24"
+                    "text-black-700 text-xs md:text-base",
+                    isExpanded ? "h-auto" : "line-clamp-4"
                   )}
                 >
                   {game.description_raw}
                 </p>
-                {!isExpanded && (
-                  <p className="absolute bottom-0 -right-2">...</p>
-                )}
+                <button
+                  className="text-indigo-600 hover:text-black hover:underline underline-offset-4"
+                  onClick={toggleDescription}
+                >
+                  show {isExpanded ? "less" : "more"}
+                </button>
               </div>
-              <button
-                className="text-indigo-600 hover:text-black hover:underline underline-offset-4"
-                onClick={toggleDescription}
-              >
-                show {isExpanded ? "less" : "more"}
-              </button>
               <h2 className="flex items-center gap-x-3 text-3xl font-semibold">
                 {price}{" "}
                 {game.reddit_url && (
