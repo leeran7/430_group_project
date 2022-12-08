@@ -128,7 +128,9 @@ export const GameCard: React.FC<{
           </div>
 
           <div className="flex-grow">
-            <h3 className="text-gray-700 font-semibold">{game.name}</h3>
+            <h3 className="text-gray-700 truncate font-semibold">
+              {game.name}
+            </h3>
             {pathname !== "/account" && (
               <>
                 <p className="text-gray-800">Price: {price}</p>
